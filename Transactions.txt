@@ -1,0 +1,56 @@
+--update  exhibition start date
+
+CREATE OR REPLACE FUNCTION move_work_to_exhibition (c charkey,n numkey,wparty partyname,moved mustime, newloc locationname, newparty partyname) RETURNS VOID AS $$
+	BEGIN
+	INSERT INTO workslocations
+		(wl_charkey, wl_numkey, wl_partyname_mus, wl_mustime_start, wl_locationname, wl_partyname_loc)
+	VALUES
+		(c,n,wparty,moved,newloc,newparty)
+	;
+	
+	UPDATE ExhibitionWorks SET
+		ew_mustime_removed = moved
+		WHERE
+			ew_numkey = n AND
+			ew_charkey = c AND
+			ew_partyname_work = wparty AND
+			ew_mustime_removed IS NULL
+	;
+	
+	INSERT INTO ExhibitionWorks
+			(ew_numkey,ew_charkey,ew_partyname_work,ew_exhibname,ew_musdate_start,ew_partyname_exhib,ew_mustime_added)
+		VALUES
+			(n, c, wparty,(
+			select el_exhibname 
+			FROM ExhibitionLocations 
+			WHERE el_locationname = newloc AND 
+			el_musdate_close IS NOT NULL),
+			(select el_musdate_start 
+			FROM ExhibitionLocations 
+			WHERE el_locationname = newloc AND 
+			el_musdate_close IS NOT NULL),
+			(select el_partyname_exhib 
+			FROM ExhibitionLocations 
+			WHERE el_locationname = newloc AND
+			el_musdate_close IS NOT NULL),
+			moved)
+	;
+		
+	END;
+			
+$$ LANGUAGE 'plpgsql';
+
+CREATE OR REPLACE FUNCTION update_exhibloc_startdate (location locationname, lparty partyname, newopen musdate) RETURNS VOID AS $$
+	BEGIN
+	UPDATE ExhibitionLocations SET
+		l_musdate_open = null
+	WHERE
+		el_locationname = location AND
+		el_partyname_location =lparty AND
+		el_musdate_start < newopen AND
+		el_musdate_start IS NOT NULL
+	;
+	
+	END;
+$$ LANGUAGE 'plpgsql'
+

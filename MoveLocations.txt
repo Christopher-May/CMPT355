@@ -1,0 +1,136 @@
+--creates parties for Locations
+INSERT INTO ns_parties
+	(p_partyName,p_street,p_city,p_provState,p_country,p_zipCode,p_phone) 
+VALUES --if this gives error zipcode is too small change it
+	('Royal Air Force Museum Cosford','Lyssander Ave','Cosford','Shifnal','UK','TF11 8UP','13063614111')
+;
+
+INSERT INTO ns_parties 
+	(p_partyName)
+VALUES
+	('John Doe'),
+	('Jane Doe'),
+	('Al Coholic'),
+	('Heywood Yapinchme'),
+	('I.P. Freely')
+;
+
+--
+--Moves data from old locations table into new table
+--
+
+ALTER TABLE locations 
+	ADD COLUMN mlPartyName partyName
+;
+UPDATE locations SET
+	mlpartyName = 'Royal Air Force Museum Cosford'
+;
+INSERT INTO ns_locations
+	(l_locationname,l_partyname, l_musdate_open,l_numworks_min,l_numworks_max)
+SELECT 
+	mlname, mlpartyName, mldateavailible, mlmin, mlmax
+FROM
+	locations
+;
+
+UPDATE ns_locations SET 
+	(l_street,l_city,l_provState,l_country,l_zipcode) = ('Lyssander Ave','Cosford','Shifnal','TF11 8UP','UK')
+		WHERE l_partyname = 'Royal Air Force Museum Cosford'
+;
+
+UPDATE ns_locations SET 
+	(l_metres_width,l_metres_height,l_metres_length) = ('500','500','500')
+	WHERE 
+		l_partyname = 'Royal Air Force Museum Cosford' AND
+		l_locationname = 'Gallery A'
+;
+
+UPDATE ns_locations SET 
+	(l_metres_width,l_metres_height,l_metres_length) = ('500','500','500')
+	WHERE 
+		l_partyname = 'Royal Air Force Museum Cosford' AND
+		l_locationname = 'Gallery B'
+;
+
+UPDATE ns_locations SET 
+	(l_metres_width,l_metres_height,l_metres_length) = ('1000','1000','1000')
+	WHERE 
+		l_partyname = 'Royal Air Force Museum Cosford' AND
+		l_locationname = 'Gallery C'
+;
+
+UPDATE ns_locations SET 
+	(l_metres_width,l_metres_height,l_metres_length) = ('1500','1500','1500')
+	WHERE 
+		l_partyname = 'Royal Air Force Museum Cosford' AND
+		l_locationname = 'Gallery D'
+;
+
+UPDATE ns_locations SET 
+	(l_metres_width,l_metres_height,l_metres_length) = ('2000','2000','2000')
+	WHERE 
+		l_partyname = 'Royal Air Force Museum Cosford' AND
+		l_locationname = 'Storage'
+;
+
+UPDATE ns_locations SET 
+	(l_metres_width,l_metres_height,l_metres_length) = ('500','500','500')
+	WHERE 
+		l_partyname = 'Royal Air Force Museum Cosford' AND
+		l_locationname = 'Lobby'
+;
+
+--Moves doors into new doors
+
+ALTER TABLE doors
+	ADD COLUMN d_partyName_gallery1 partyName,
+	ADD COLUMN d_partyName_gallery2 partyName
+;
+
+UPDATE doors SET
+	d_partyName_gallery1 = 'Royal Air Force Museum Cosford'
+;
+UPDATE doors SET
+	d_partyName_gallery2 = 'Royal Air Force Museum Cosford'
+;
+INSERT INTO ns_doors
+	 (d_locationname_gallery1, d_partyname_gallery1, d_locationname_gallery2, d_partyname_gallery2)
+SELECT
+	mdloc1,d_partyname_gallery1,mdloc2,d_partyname_gallery2
+FROM
+	doors
+;
+
+--Moves Data from locationtemp
+
+INSERT INTO ns_locations (l_locationname,l_partyname) SELECT ltlocation, ltsponsor FROM locationstemp;
+
+UPDATE ns_locations SET 
+	(l_street,l_city,l_provState,l_country,l_zipcode) = ('3515 Thatcher Ave','Saskatoon','SK','S7R 1C4','Canada')
+		WHERE l_partyname = 'Royal Air Force Museum Cosford' AND
+		l_locationname = 'Saskatoon'
+;
+
+UPDATE ns_locations SET 
+	(l_street,l_city,l_provState,l_country,l_zipcode) = ('3515 Thatcher Ave','Saskatoon','SK','S7R 1C4','Canada')
+		WHERE l_partyname = 'Royal Air Force Museum Cosford' AND
+		l_locationname = 'Regina'
+;
+
+UPDATE ns_locations SET 
+	(l_street,l_city,l_provState,l_country,l_zipcode) = ('3515 Thatcher Ave','Saskatoon','SK','S7R 1C4','Canada')
+		WHERE l_partyname = 'Royal Air Force Museum Cosford' AND
+		l_locationname = 'Prince Albert'
+;
+
+UPDATE ns_locations SET 
+	(l_street,l_city,l_provState,l_country,l_zipcode) = ('3515 Thatcher Ave','Saskatoon','SK','S7R 1C4','Canada')
+		WHERE l_partyname = 'Royal Air Force Museum Cosford' AND
+		l_locationname = 'Moose Jaw'
+;
+
+UPDATE ns_locations SET 
+	(l_street,l_city,l_provState,l_country,l_zipcode) = ('3515 Thatcher Ave','Saskatoon','SK','S7R 1C4','Canada')
+		WHERE l_partyname = 'Royal Air Force Museum Cosford' AND
+		l_locationname = 'Swift Current'
+;

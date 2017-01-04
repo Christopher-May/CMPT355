@@ -1,0 +1,112 @@
+--Adding parties
+
+INSERT INTO ns_parties 
+	(p_partyName)
+SELECT DISTINCT
+	ltsecurity
+FROM
+	 locationsTemp
+;
+
+--
+--Move old Exhibitions to new Exhibitions
+--
+
+ALTER TABLE exhibitionslocations
+	ADD COLUMN exlPartyName partyName
+;
+ALTER TABLE locationsTemp
+	ADD COLUMN ltPartyName partyName
+;
+UPDATE Exhibitionslocations SET
+	exlpartyName = 'Royal Air Force Museum Cosford'
+;
+UPDATE locationsTemp SET
+	ltpartyName = 'Royal Air Force Museum Cosford'
+;
+
+INSERT INTO ns_exhibitions 
+	(e_exhibname, e_partyname, e_musdate_start, e_musdate_end)
+SELECT
+	exlname, exlPartyName, exlstart, exlend
+FROM
+	exhibitionslocations
+;
+
+INSERT INTO ns_exhibitions
+	(e_exhibname, e_partyname, e_musdate_start, e_musdate_end,e_price_insurance)
+VALUES
+	('WW1 and WW2 Propeller','Royal Air Force Museum Cosford', '2016-12-08', '2017-04-06',99999999999.00)
+;
+UPDATE ns_exhibitions 
+SET 
+	e_exhibdesc = ( SELECT DISTINCT e.exdescription
+FROM
+	Exhibitions e
+WHERE
+	e.exname = e_exhibname )
+;
+UPDATE ns_exhibitions
+SET
+	e_planned = FALSE
+;
+UPDATE ns_exhibitions
+SET
+	e_planned = TRUE
+WHERE
+	e_musdate_start > '2016-02-01'
+;
+--
+-- Move ExhibitionsLocations
+--
+INSERT INTO ns_exhibitionLocations
+	(el_exhibName,el_musDate_start,el_partyName_exhib,el_locationName,el_partyName_location,el_musDate_open,el_musDate_close )
+SELECT
+	exlname, exlstart, exlpartyname, exllocation, exlpartyname, exlstart, exlend
+FROM
+	exhibitionsLocations
+;
+
+ALTER TABLE locationsTemp
+	ADD COLUMN ltexhibstart musDate
+;
+
+UPDATE locationsTemp SET
+	ltexhibstart = '2016-12-08'
+;
+
+INSERT INTO ns_exhibitionLocations
+	(el_exhibname, el_musdate_start, el_partyName_exhib, el_locationname, el_partyname_location, el_musdate_open, el_musdate_close)
+SELECT
+	ltexhibitionname, ltexhibstart, ltpartyName, ltlocation, ltpartyName, ltstartdate, ltenddate
+FROM
+	locationsTemp
+;
+	
+--
+--Add exhibitions staff
+--
+
+INSERT INTO ns_exhibitionStaff
+	(ex_partyname_staff, ex_exhibname, ex_musdate_start, ex_partyname_exhib)
+SELECT
+	ltsecurity, ltexhibitionname, ltstartdate, ltpartyName
+FROM
+	locationsTemp
+;
+UPDATE ns_exhibitionStaff
+SET 
+	ex_job = 'SECURITY'
+;
+
+--
+--Add exhibitions Sponsor
+--
+
+INSERT INTO ns_exhibitionSponsor
+	(es_partyname_sponsor, es_exhibname, es_musdate_start, es_partyname_exhib)
+SELECT
+	ltsponsor, ltexhibitionname, ltstartdate, ltpartyName
+FROM
+	locationsTemp
+;

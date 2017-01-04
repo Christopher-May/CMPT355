@@ -1,0 +1,16 @@
+ 
+DELETE FROM ns_parties WHERE p_partyname = 'Christopher May';
+UPDATE ns_worksvalues SET wv_musdate_start = '1990-08-21' WHERE wv_musdate_start is null;
+
+UPDATE ns_worksowners SET wo_mustime_start = '1999-08-28 00:00:00' WHERE wo_mustime_start is null;
+DELETE FROM ns_workslocations WHERE wl_locationname = 'SOLD';
+UPDATE ns_locations SET l_partyname = 'Royal Air Force Museum Cosford' ;
+update ns_exhibitionstaff SET ex_musdate_staffstart = ex_musdate_start;
+delete from ns_exhibitionstaff where 1=1;
+INSERT INTO ns_exhibitionstaff VALUES('Jacob P. Katz', 'SECURITY', 'WW1 and WW2 Propeller', '2016-12-08', 'Royal Air Force Museum Cosford','2016-12-08');
+
+update ns_exhibitionsponsor SET es_musdate_start= '2016-12-08';
+
+
+
+insert into ns_exhibitionstaff values ('Jacob P. Katz','SECURITY','WW1 and WW2 Propeller','2016-12-08','Royal Air Force Museum Cosford','2016-12-08');

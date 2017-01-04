@@ -1,0 +1,77 @@
+DROP VIEW CheckExhib;
+DROP VIEW CheckExhibLoc;
+DROP VIEW CheckExhibStaff;
+DROP VIEW CheckExhibSponsor;
+
+CREATE VIEW CheckExhib AS
+	SELECT
+		count(1) =9 AS TRUE
+	FROM
+		ns_exhibitions n, exhibitionsLocations o
+	WHERE
+		n.e_exhibname = o.exlname AND
+		n.e_partyname = o.exlpartyname AND
+		n.e_musdate_start = o.exlstart AND
+		n.e_musdate_end = o.exlend
+	
+;
+SELECT * FROM CheckExhib;
+
+CREATE VIEW CheckExhibLoc AS
+	(SELECT
+		count(1)= 9 AS TRUE
+	FROM
+	ns_exhibitionLocations n, exhibitionsLocations o
+	WHERE
+		n.el_exhibName = o.exlname AND
+		n.el_musDate_start = o.exlstart AND
+		n.el_partyName_exhib = o.exlpartyname AND
+		n.el_locationName = o.exllocation AND
+		n.el_partyName_location = o.exlpartyname AND
+		n.el_musDate_open = o.exlstart AND
+		n.el_musDate_close = o.exlend
+	)
+	UNION
+	(
+	SELECT
+		count(1) = 5 AS TRUE
+	FROM
+		ns_exhibitionLocations n, locationsTemp o
+	WHERE
+		n.el_exhibName = o.ltexhibitionname AND
+		n.el_musDate_start = o.ltexhibstart AND
+		n.el_partyName_exhib = o.ltpartyName AND
+		n.el_locationName = o.ltpartyName AND
+		n.el_partyName_location = o.ltsponsor AND
+		n.el_musDate_open = o.ltstartdate AND
+		n.el_musDate_close = o.ltenddate
+	)
+;
+SELECT * FROM CheckExhibLoc;
+
+CREATE VIEW CheckExhibStaff AS
+	SELECT
+		count(1) = 5 AS TRUE
+	FROM
+		ns_exhibitionStaff n , locationsTemp o
+	WHERE
+	n.ex_partyname_staff = ltsecurity AND
+	n.ex_exhibname = ltexhibitionname AND
+	n.ex_musdate_start = ltstartdate AND
+	n.ex_partyname_exhib = ltpartyName
+;
+
+SELECT * FROM CheckExhibStaff;
+
+CREATE VIEW CheckExhibSponsor AS
+	SELECT
+		count(1) = 5 AS TRUE
+	FROM
+		ns_exhibitionSponsor n , locationsTemp o
+	WHERE
+		es_partyname_sponsor = ltsponsor AND
+		es_exhibname = ltexhibitionname AND
+		es_musdate_start = ltstartdate AND
+		es_partyname_exhib = ltpartyName
+;
+SELECT * FROM CheckExhibSponsor;

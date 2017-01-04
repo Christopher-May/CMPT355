@@ -1,0 +1,148 @@
+--TestWorks
+DROP VIEW CheckWorks;
+DROP VIEW CheckMedia;
+DROP VIEW CheckMainType;
+DROP VIEW CheckSecondaryType;
+DROP VIEW CheckWorksLocation;
+DROP VIEW CheckWorksValue;
+DROP VIEW CheckWorksOwner;
+DROP VIEW CheckWorksExLocation;
+--Parties
+--Most of parties was inserted manually because they were mostly names so it will be inspected visually
+
+--Works
+CREATE VIEW CheckWorks AS
+	SELECT 
+		count (1)= 115 AS TRUE
+	FROM 
+		ns_works n, works o
+    WHERE 
+	n.w_numkey = o.wrnumkey AND
+	n.w_charkey = o.wrcharkey AND
+	w_partyname = wrpartyname AND
+	w_workname = wrname AND
+	w_authorname = wrattributed AND
+	w_creationdate = wrcreated AND
+	w_workdesc = wrdescription AND
+	w_country = wrcountry
+;
+SELECT * FROM CheckWorks;
+
+CREATE VIEW CheckMedia AS
+	SELECT
+		count(1)= 113 AS TRUE
+	FROM
+		ns_WorksMedia n, WorksMedia o
+	WHERE
+		n.wm_numkey = o.wrmnumkey AND
+		n.wm_charkey =  o.wrmcharkey AND
+		n.wm_partyname = o.wrmpartyname AND
+		n.wm_workmedia = o.wrmmedia
+;
+SELECT * FROM CheckMedia;
+
+CREATE VIEW CheckMainType AS 
+	SELECT
+		count(1) = 181  AS TRUE
+	FROM
+		ns_WorksFlightMethod n, WorksType o
+	WHERE
+		n.wft_numkey = o.wrtnumkey AND
+		n.wft_charkey =  o.wrtcharkey AND
+		n.wft_flightMethod = o.wrtmaintype
+;
+SELECT * FROM CheckMainType;
+
+CREATE VIEW CheckSecondaryType AS
+	SELECT
+		count(1) = 181 AS TRUE
+	FROM
+		ns_worksplaneusage, WorksType o
+	WHERE
+		wpu_numKey = wrtnumkey AND
+		wpu_CharKey = wrtcharkey AND
+		wpu_PartyName = wrtPartyName AND
+		wpu_planeusage = wrtsecondarytype
+;
+SELECT * FROM CheckSecondaryType;
+
+CREATE VIEW CheckWorksLocation AS
+	SELECT
+		count(1) =115 AS TRUE
+	FROM
+		ns_WorksLocations n, WorksLocation o
+	WHERE
+		n.wl_charkey = o.wrlcharkey AND
+		n.wl_numkey = o.wrlnumkey AND
+		n.wl_partyname_mus = o.wrlpartyName AND
+		n.wl_mustime_start = o.wrlstart AND
+		n.wl_locationname = o.wrllocation AND
+		n.wl_partyname_loc = o.wrlpartynameloc AND
+		(n.wl_mustime_end = o.wrlend OR n.wl_mustime_end IS NULL)
+;
+SELECT * FROM CheckWorksLocation;
+
+CREATE VIEW CheckWorksValue AS
+	SELECT
+		count(1) =115 AS TRUE
+	FROM
+		ns_worksValues n, Works o
+	WHERE
+		n.wv_numkey = o.wrnumkey AND
+		n.wv_charkey = o.wrcharkey AND
+		n.wv_partyname = o.wrpartyName AND
+		n.wv_price = o.wrprice AND
+		(n.wv_musdate_start = o.wrretrieved OR wv_musdate_start IS NULL)
+;
+SELECT * FROM CheckWorksValue;
+
+CREATE VIEW CheckWorksOwner AS
+		(SELECT 
+			count(1) =82 AS TRUE
+		FROM
+			ns_worksOwners n, works w
+		WHERE
+			n.wo_numkey = w.wrnumkey AND
+			n.wo_charkey = w.wrcharkey AND
+			n.wo_partyname = w.wrpartyName AND
+			n.wo_mustime_start = w.wrretrieved AND
+			n.wo_mustime_end IS NULL
+		)
+	UNION
+		(SELECT 
+			count(30) =30 AS TRUE
+		FROM
+			ns_worksOwners n, worksborrow b
+		WHERE
+			n.wo_numkey = b.wrbnumkey AND
+			n.wo_charkey = b.wrbcharkey AND
+			wo_partyname_owner = wrbdonor
+		)
+	UNION
+		(SELECT
+			count(1) = 3 AS TRUE
+		FROM
+			ns_worksOwners n, transactions t
+		WHERE
+			n.wo_numkey = t.tnumkey AND
+			n.wo_charkey = t.tcharkey AND
+			n.wo_mustime_end = t.tsolddate
+		)
+;			
+SELECT * FROM CheckWorksOwner;
+
+CREATE VIEW CheckWorksExLocation AS
+	SELECT
+		count(1) = 144 AS TRUE
+	From
+		ns_exhibitionWorks n , ExhibitionsWorks o
+	WHERE
+		n.ew_numKey = o.exwnumkey AND
+		n.ew_charKey = o.exwcharkey AND
+		n.ew_partyName_work = o.wrpartyname AND
+		n.ew_exhibName = o.exwname AND
+		n.ew_musDate_start = o.exwstart AND
+		n.ew_partyName_exhib = o.wrpartyname AND
+		n.ew_musTime_added = o.exwend	
+;
+SELECT * FROM CheckWorksExLocation;

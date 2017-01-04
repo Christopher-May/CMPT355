@@ -1,0 +1,15 @@
+DROP VIEW CheckDoors;
+
+CREATE VIEW CheckDoors AS
+	SELECT
+		count(1) = 14 AS TRUE
+	FROM
+		ns_doors n, doors o
+	WHERE
+		n.d_locationname_gallery1 = o.mdloc1 AND
+		n.d_locationname_gallery2 = o.mdloc2 AND
+		n.d_partyname_gallery1 = o.d_partyname_gallery1 AND
+		n.d_partyname_gallery2 = o.d_partyname_gallery2
+;
+
+SELECT * FROM CheckDoors;

@@ -1,0 +1,178 @@
+DROP TRIGGER IF EXISTS calculate_cost ON ns_Exhibitions ;
+DROP TRIGGER IF EXISTS checkConnections ON ns_ExhibitionLocations;
+DROP TRIGGER IF EXISTS update_workslocation_date ON ns_WorksLocations;
+DROP TRIGGER IF EXISTS add_new_worksowner ON ns_transactions;
+DROP TRIGGER IF EXISTS update_worksvalue_date ON ns_WorksValues;
+DROP TRIGGER IF EXISTS update_exhibition_works ON ns_exhibitionworks;
+DROP TRIGGER IF EXISTS check_exhibition_planned ON ns_ExhibitionLocations;
+
+CREATE OR REPLACE FUNCTION calc_cost() RETURNS TRIGGER AS $calc_cost$
+ BEGIN
+	IF NEW.e_price_insurance >= (SELECT SUM(w.wv_price) 
+		FROM
+			ns_worksvalues w, ns_Exhibitions e, ns_exhibitionworks ew
+		WHERE
+			w.wv_numkey = ew.ew_numkey AND
+			w.wv_charkey = ew.ew_charkey AND
+			w.wv_partyname = ew.ew_partyname_work AND
+			wv_musdate_end IS NOT NULL AND
+			ew.ew_musdate_start = NEW.e_musdate_start AND
+			ew.ew_exhibname = NEW.e_exhibname AND
+			NEW.e_partyname = ew.ew_partyname_exhib
+	)*1.1 THEN
+				
+		RETURN NEW;
+	ELSIF NEW.e_price_insurance IS NULL THEN
+		raise notice 'Your Insurance value is zero... is that okay?';
+		RETURN NEW;
+	
+	END IF;
+	
+	RETURN NULL;
+END;
+$calc_cost$ LANGUAGE plpgsql;
+
+CREATE TRIGGER calculate_cost
+BEFORE INSERT OR UPDATE ON ns_Exhibitions
+FOR EACH ROW EXECUTE PROCEDURE calc_cost();
+    
+CREATE OR REPLACE FUNCTION check_connections() RETURNS TRIGGER AS $check_connections$
+	DECLARE
+		duplocation ns_locationname;
+	BEGIN
+		SELECT el_locationname INTO duplocation
+		FROM 
+		      ns_ExhibitionLocations
+		WHERE 
+			el_exhibname = NEW.el_exhibname AND
+			el_musdate_start = NEW.el_musdate_start AND
+			el_partyname_exhib = NEW.el_partyname_exhib AND
+			el_partyname_location = NEW.el_partyname_location
+		;
+		raise notice '%',duplocation;
+		IF duplocation IS NOT NULL THEN
+			IF EXISTS (
+				SELECT
+					1
+				FROM
+					ns_doors
+				WHERE
+					(d_locationname_gallery1 = duplocation AND d_locationname_gallery2 = NEW.el_locationname) OR
+					(d_locationname_gallery1 = NEW.el_locationname AND d_locationname_gallery2 = duplocation )
+			) THEN
+				RETURN NEW;
+			END IF;
+		ELSE
+			RETURN NEW;
+		END IF;
+	RETURN NULL;
+END;
+$check_connections$ LANGUAGE plpgsql;
+
+CREATE TRIGGER checkConnections
+BEFORE INSERT ON ns_ExhibitionLocations
+FOR EACH ROW EXECUTE PROCEDURE check_connections();
+
+CREATE OR REPLACE FUNCTION check_loc_work() RETURNS TRIGGER AS $check_loc_work$
+		
+	BEGIN
+		UPDATE ns_WorksLocations SET
+			wl_mustime_end = NEW.wl_mustime_start
+		WHERE
+			NEW.wl_charkey = wl_charkey AND
+			NEW.wl_numkey = wl_numkey AND
+			NEW.wl_partyname_mus = wl_partyname_mus AND
+			wl_mustime_end IS NULL
+		;
+		RETURN NEW;
+	END;
+$check_loc_work$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_workslocation_date
+BEFORE INSERT ON ns_WorksLocations
+FOR EACH ROW EXECUTE PROCEDURE check_loc_work();
+
+CREATE OR REPLACE FUNCTION new_owner_work() RETURNS TRIGGER AS $new_owner_work$
+	BEGIN
+		IF NEW.t_transtype = 'BUY' THEN
+			raise notice 'BUY WORKED';
+			INSERT INTO ns_WorksOwners
+				(wo_numkey,wo_charkey, wo_partyname, wo_partyname_owner, wo_mustime_start)
+			VALUES
+				(NEW.t_numkey, NEW.t_charkey, NEW.t_partyname, NEW.t_partyname, NEW. t_mustime_end)
+			;
+			UPDATE ns_WorksOwners SET
+				wo_mustime_end = NEW. t_mustime_end
+			WHERE
+				NEW.t_numkey = wo_numkey  AND
+				NEW.t_charkey = wo_charkey AND
+				NEW.t_partyname = NEW.t_partyname AND
+				NEW.t_partyname_other = wo_partyname_owner AND
+				wo_mustime_start IS NULL
+			;	
+		END IF;
+		IF NEW.t_transtype = 'SELL' THEN
+			raise notice 'SELL WORKED';
+			INSERT INTO ns_WorksOwners
+				(wo_numkey,wo_charkey, wo_partyname, wo_partyname_owner, wo_mustime_start)
+			VALUES
+				(NEW.t_numkey, NEW.t_charkey, NEW.t_partyname, NEW.t_partyname_other, NEW.t_mustime_end)
+			;
+			UPDATE ns_WorksOwners SET
+				wo_mustime_end = NEW. t_mustime_end
+			WHERE
+				NEW.t_numkey = wo_numkey  AND
+				NEW.t_charkey = wo_charkey AND
+				NEW.t_partyname = NEW.t_partyname AND
+				NEW.t_partyname_other = NEW.t_partyname AND
+				wo_mustime_start IS NULL
+			;
+		END IF;
+
+	RETURN NEW;
+
+	END;
+$new_owner_work$ LANGUAGE plpgsql;
+
+CREATE TRIGGER add_new_worksowner
+AFTER INSERT on ns_transactions
+FOR EACH ROW EXECUTE PROCEDURE new_owner_work();
+
+CREATE OR REPLACE FUNCTION new_work_value() RETURNS TRIGGER AS $new_work_value$
+	BEGIN
+		UPDATE ns_WorksValues SET
+			wv_musDate_end = NEW.wv_musDate_start
+		WHERE
+			NEW.wv_numkey = wv_numkey AND
+			NEW.wv_charkey = wv_charkey AND 
+			NEW.wv_partyname = wv_partyname AND 
+			wv_musDate_end IS NULL
+		;
+	RETURN NEW;
+	
+	END;
+$new_work_value$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_worksvalue_date
+BEFORE INSERT on ns_WorksValues
+FOR EACH ROW EXECUTE PROCEDURE new_work_value();
+
+CREATE OR REPLACE FUNCTION check_exhib_planned() RETURNS TRIGGER AS $check_exhib_planned$
+	BEGIN
+		UPDATE ns_Exhibitions SET 
+			e_planned = false
+		WHERE
+			NEW.el_exhibname = e_exhibname AND
+			NEW.el_musdate_start = e_musdate_start AND
+			NEW.el_partyname_exhib = e_partyname AND
+			e_musdate_start < current_date
+		
+		;
+	RETURN NEW;
+	
+	END;
+$check_exhib_planned$ LANGUAGE plpgsql;
+
+CREATE TRIGGER check_exhibition_planned
+BEFORE INSERT OR UPDATE on ns_ExhibitionLocations
+FOR EACH ROW EXECUTE PROCEDURE check_exhib_planned();

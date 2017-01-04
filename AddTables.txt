@@ -1,0 +1,341 @@
+DROP VIEW CheckExhib;
+DROP VIEW CheckExhibLoc;
+DROP VIEW CheckExhibStaff;
+DROP VIEW CheckExhibSponsor;
+DROP VIEW CheckWorks;
+DROP VIEW CheckMedia;
+DROP VIEW CheckMainType;
+DROP VIEW CheckSecondaryType;
+DROP VIEW CheckWorksLocation;
+DROP VIEW CheckWorksValue;
+DROP VIEW CheckWorksOwner;
+DROP VIEW CheckWorksExLocation;
+DROP VIEW CheckDoors;
+
+
+DROP TABLE IF EXISTS ns_WorksPlaneUsage;
+DROP TABLE IF EXISTS ns_WorksFlightMethod;
+
+DROP TABLE IF EXISTS ns_Doors;
+DROP TABLE IF EXISTS ns_Transactions;
+DROP TABLE IF EXISTS ns_ExhibitionLocations;
+DROP TABLE IF EXISTS ns_ExhibitionStaff;
+DROP TABLE IF EXISTS ns_ExhibitionSponsor;
+DROP TABLE IF EXISTS ns_ExhibitionWorks;
+DROP TABLE IF EXISTS ns_WorksLocations;
+DROP TABLE IF EXISTS ns_WorksOwners;
+DROP TABLE IF EXISTS ns_WorksMedia;
+DROP TABLE IF EXISTS ns_WorksValues;
+DROP TABLE IF EXISTS ns_Exhibitions;
+DROP TABLE IF EXISTS ns_Locations;
+DROP TABLE IF EXISTS ns_Works;
+DROP TABLE IF EXISTS ns_Parties;
+
+
+
+DROP DOMAIN IF EXISTS ns_shapeName;
+DROP DOMAIN IF EXISTS ns_colourName;
+DROP DOMAIN IF EXISTS ns_prototype;
+DROP DOMAIN IF EXISTS ns_depicts;
+DROP DOMAIN IF EXISTS ns_hospitalDepartment;
+DROP DOMAIN IF EXISTS ns_planeUsage;
+DROP DOMAIN IF EXISTS ns_flightMethod;
+DROP DOMAIN IF EXISTS ns_artifactPurpose;
+DROP DOMAIN IF EXISTS ns_creationEra;
+DROP DOMAIN IF EXISTS ns_artSubCategory;
+DROP DOMAIN IF EXISTS ns_artCategory;
+-- Domain Definitions: TODO update these
+
+DROP DOMAIN IF EXISTS ns_job;
+DROP DOMAIN IF EXISTS ns_workName ;
+DROP DOMAIN IF EXISTS ns_partyName ;
+DROP DOMAIN IF EXISTS ns_authorName ;
+DROP DOMAIN IF EXISTS ns_locationName ;
+DROP DOMAIN IF EXISTS ns_exhibName ;
+DROP DOMAIN IF EXISTS ns_musDesc ;
+DROP DOMAIN IF EXISTS ns_exhibDesc ;
+DROP DOMAIN IF EXISTS ns_street ;
+DROP DOMAIN IF EXISTS ns_city ;
+DROP DOMAIN IF EXISTS ns_provState ;
+DROP DOMAIN IF EXISTS ns_country ;
+DROP DOMAIN IF EXISTS ns_zipcode ;
+DROP DOMAIN IF EXISTS ns_phone ;
+DROP DOMAIN IF EXISTS ns_numKey;
+DROP DOMAIN IF EXISTS ns_workDesc ;
+DROP DOMAIN IF EXISTS ns_charKey ;
+DROP DOMAIN IF EXISTS ns_creationDate ;
+DROP DOMAIN IF EXISTS ns_musDate ;
+DROP DOMAIN IF EXISTS ns_musTime ;
+DROP DOMAIN IF EXISTS ns_price ;
+DROP DOMAIN IF EXISTS ns_transType ;
+DROP DOMAIN IF EXISTS ns_numWorks ;
+DROP DOMAIN IF EXISTS ns_metres;
+DROP DOMAIN IF EXISTS ns_email;
+DROP DOMAIN IF EXISTS ns_workMedia;
+DROP DOMAIN IF EXISTS ns_planned;
+
+
+CREATE DOMAIN ns_planned AS BOOLEAN;
+CREATE DOMAIN ns_workName AS VARCHAR(255);
+CREATE DOMAIN ns_partyName AS VARCHAR(50);
+CREATE DOMAIN ns_authorName AS VARCHAR(50);
+CREATE DOMAIN ns_locationName AS VARCHAR(50);
+CREATE DOMAIN ns_exhibName AS VARCHAR(100);
+CREATE DOMAIN ns_musDesc AS TEXT;
+CREATE DOMAIN ns_exhibDesc AS TEXT;
+CREATE DOMAIN ns_workDesc AS TEXT;
+CREATE DOMAIN ns_street AS VARCHAR(75);
+CREATE DOMAIN ns_city AS VARCHAR(75);
+CREATE DOMAIN ns_provState AS VARCHAR(75);
+CREATE DOMAIN ns_country AS VARCHAR(75);
+CREATE DOMAIN ns_zipcode AS VARCHAR(12);
+CREATE DOMAIN ns_phone AS VARCHAR(20);
+CREATE DOMAIN ns_numKey AS NUMERIC(20,0);
+CREATE DOMAIN ns_charKey AS VARCHAR(4);
+CREATE DOMAIN ns_creationDate AS DATE 		CONSTRAINT datelimit CHECK(VALUE <= NOW());
+CREATE DOMAIN ns_musDate AS DATE;
+CREATE DOMAIN ns_musTime AS TIMESTAMP;
+CREATE DOMAIN ns_workMedia AS VARCHAR(50)	CONSTRAINT notEmpty  CHECK(Value != '');
+CREATE DOMAIN ns_price AS NUMERIC(19,2)	CONSTRAINT realValue CHECK(Value > 0);
+CREATE DOMAIN ns_transType AS VARCHAR(10)	CONSTRAINT realValue CHECK(Value in ('BUY', 'SELL', 'LOAN', 'REPAIR','BORROW'));
+CREATE DOMAIN ns_numWorks AS NUMERIC(5,0)	CONSTRAINT realValue CHECK(Value >= 0);
+CREATE DOMAIN ns_metres AS REAL	CONSTRAINT realValue CHECK(Value > 0);
+CREATE DOMAIN ns_email AS VARCHAR(128);
+CREATE DOMAIN ns_job AS VARCHAR(50)		CONSTRAINT jobType   CHECK(Value in ('SECURITY'));
+
+
+
+
+
+-- Types and subtypes, renamed so as to not include the word Type
+CREATE DOMAIN ns_artCategory AS VARCHAR(24) CHECK (VALUE IN ('ISLAMIC', 'ASIAN', 'DECORATIVE', 'EUROPEAN', 'PRINT MEDIA', 'MODERN', 'AFRICAN', 'PHOTOGRAPH', 'AMERICAN', 'ANTIQUE', 'LATIN AMERICAN'));
+CREATE DOMAIN ns_artSubCategory AS VARCHAR(24) CHECK (VALUE IN ('ART?', 'INSTALLATION ART', 'METALWORK', 'GLASS', 'JEWELRY', 'FURNITURE', 'LIGHTING DEVICE', 'MOSAIAC', 'SCULPTURE', 'WAR', 'CERAMICS', 'CORPORATE', 'TOMB', 'DRAWING', 'WOOD CUTOUT', 'WATERCOLOR', 'FURNATURE', 'LIFE', 'PASTEL', 'BOOK', 'PAINTING', 'ITEM'));
+CREATE DOMAIN ns_creationEra AS VARCHAR(24) CHECK (VALUE IN ('New Kingdom', 'Byzantine', 'Old Kingdom', 'Late Period', 'Romano-Egyptian', 'Unknown', 'Middle Kingdom', 'Ptolemaic', 'Modern'));
+CREATE DOMAIN ns_artifactPurpose AS VARCHAR(24) CHECK (VALUE IN ('Tomb Equipment', 'Personal Object', 'Container', 'Religion', 'Currency', 'Architecture', 'Writing', 'Textile', 'Weapon', 'Art', 'Education', 'Electronic Device', 'Container', 'Artifact', 'Tool', 'Clothing'));
+CREATE DOMAIN ns_flightMethod AS VARCHAR(50) CHECK (VALUE IN ('Jet','Propeller','Rocketcraft','Blimp','Rotocraft'));
+CREATE DOMAIN ns_planeUsage AS VARCHAR(50) CHECK (VALUE IN ( 'Training', 'Goods Transport', 'Scouting', 'Fighter', 'Rotercraft', 'Prototype', 'Bomber', 'Sporting', 'Intercepter', 'Rescue', 'Goods Transporter', 'Air Liner', 'Troop Transporter'));
+CREATE DOMAIN ns_hospitalDepartment AS VARCHAR(50) CHECK (VALUE IN ('Neurosurgery', 'Clinical Laboratory Diagnosis', 'Dental', 'Nephrology', 'Ophthalmology', 'Ephemera', 'Otolaryngology', 'Cardiology', 'Psychiatry', 'Nursing', 'Diagnostic Radiology', 'Anaesthesia', 'Basic Science', 'Cardiac Surgery'));
+
+-- Additional attributes
+CREATE DOMAIN ns_depicts AS VARCHAR(50); -- NO CONSTRAINTS, ON PURPOSE
+CREATE DOMAIN ns_prototype AS BOOLEAN;
+CREATE DOMAIN ns_colourName AS VARCHAR(24);
+CREATE DOMAIN ns_shapeName AS VARCHAR(24);
+
+
+
+
+
+
+-- The parties in the museums (as in, persons or corporations, not a kegger at Dave's house)
+CREATE TABLE ns_Parties
+(
+  p_partyName         ns_partyName,
+  
+  p_street            ns_street,
+  p_city              ns_city,
+  p_provState         ns_provState,
+  p_country           ns_country,
+  p_zipCode           ns_zipCode, -- or postal code
+  p_phone             ns_phone,
+  p_email             ns_email
+);
+
+-- a physical museum works
+CREATE TABLE ns_Works
+(
+  w_numKey           ns_numKey,
+  w_charKey          ns_charKey,
+  w_partyName        ns_partyName,
+  
+  w_workName             ns_workName,
+  w_authorName           ns_authorName,
+  w_creationDate         ns_creationDate,
+  w_workDesc             ns_workDesc,
+  w_artCategory          ns_artCategory,         -- HMoFA type
+  w_artSubCategory       ns_artSubCategory,      -- HMoFA subtype & janni's "type"
+  w_creationEra          ns_creationEra,         -- Egyptian type
+  w_artifactPurpose      ns_artifactPurpose,     -- Egyptian subtype
+  w_hosptialDepartment   ns_hospitalDepartment,  -- a type
+  w_depicts              ns_depicts,             -- the thing the item depicts (really only applicable for art)
+  w_prototype            ns_prototype,           -- whether the plane is a prototype or not
+  w_colourName           ns_colourName,          -- the color
+  w_shapeName            ns_shapeName,
+  w_country              ns_country
+  
+  -- Here's where constraints would go, in the non-ns version
+);
+
+-- The rooms and locations in museums
+CREATE TABLE ns_Locations
+(
+  l_locationName         ns_locationName,
+  l_partyName            ns_partyName,
+  l_street               ns_street,
+  l_city                 ns_city,
+  l_provState            ns_provState,
+  l_country              ns_country,
+  l_zipCode              ns_zipCode,
+  l_musDate_open         ns_musDate, 
+  l_numWorks_min         ns_numWorks,
+  l_numWorks_max         ns_numWorks,
+  l_metres_width         ns_metres,
+  l_metres_height        ns_metres,
+  l_metres_length        ns_metres
+);
+
+-- The exhibitions put on by a museum
+CREATE TABLE ns_Exhibitions
+(
+  e_exhibName         ns_exhibName,
+  e_musDate_start     ns_musDate,
+  e_partyName         ns_partyName,
+  
+  e_musDate_end       ns_musDate,
+  e_exhibDesc         ns_exhibDesc,
+  e_price_insurance   ns_price,
+  e_planned           ns_planned
+);
+
+-- The temporal values of the works
+CREATE TABLE ns_WorksValues
+(
+  wv_numKey           ns_numKey,
+  wv_charKey          ns_charKey,
+  wv_partyName        ns_partyName,
+  wv_musDate_start    ns_musDate,
+  
+  wv_price            ns_price,
+  wv_musDate_end      ns_musDate
+);
+
+
+-- The media of the works
+CREATE TABLE ns_WorksMedia
+(
+  wm_numKey           ns_numKey,
+  wm_charKey          ns_charKey,
+  wm_partyName        ns_partyName,
+  wm_workMedia        ns_workMedia
+);
+
+-- The owners of the works
+CREATE TABLE ns_WorksOwners
+(
+  wo_numKey           ns_numKey,
+  wo_charKey          ns_charKey,
+  wo_partyName        ns_partyName,
+  wo_partyName_owner  ns_partyName,
+  wo_musTime_start    ns_musTime,
+  
+  wo_musTime_end      ns_musTime
+);
+
+
+-- The doors between locations
+CREATE TABLE ns_Doors
+(
+  d_locationName_gallery1  ns_locationName,
+  d_partyName_gallery1     ns_partyName,
+  d_locationName_gallery2  ns_locationName,
+  d_partyName_gallery2     ns_partyName
+);
+
+-- The locations of the works in the museums
+CREATE TABLE ns_WorksLocations
+(
+  wl_charKey              ns_charKey,
+  wl_numKey               ns_numKey,
+  wl_partyName_mus        ns_partyName,
+  wl_musTime_start        ns_musTime,
+  wl_locationName         ns_locationName,
+  wl_partyName_loc        ns_partyName,
+  
+  wl_musTime_end          ns_musTime
+);
+
+-- The exhibitions' locations, temporally stored
+CREATE TABLE ns_ExhibitionLocations
+(
+  el_exhibName            ns_exhibName,
+  el_musDate_start        ns_musDate,
+  el_partyName_exhib      ns_partyName,
+  el_locationName         ns_locationName,
+  el_partyName_location   ns_partyName,
+  
+  el_musDate_open        ns_musDate,
+  el_musDate_close        ns_musDate
+);
+
+-- The exhibitions' staff
+CREATE TABLE ns_ExhibitionStaff
+(
+  ex_partyName_staff      ns_partyName,
+  ex_job                  ns_job,
+  ex_exhibName            ns_exhibName,
+  ex_musDate_start        ns_musDate,
+  ex_partyName_exhib      ns_partyName,
+  ex_musDate_staffStart   ns_musDate,
+  
+  ex_musDate_staffEnd     ns_musDate
+);
+
+-- The exhibition sponsor
+CREATE TABLE ns_ExhibitionSponsor
+(
+  es_partyName_sponsor    ns_partyName,
+  es_exhibName            ns_exhibName,
+  es_musDate_start        ns_musDate,
+  es_partyName_exhib      ns_partyName
+);
+
+-- The works contained in an exhibition
+CREATE TABLE ns_ExhibitionWorks
+(
+  ew_numKey               ns_numKey,
+  ew_charKey              ns_charKey,
+  ew_partyName_work       ns_partyName,
+  ew_exhibName            ns_exhibName,
+  ew_musDate_start        ns_musDate,
+  ew_partyName_exhib      ns_partyName,
+  
+  ew_musTime_added        ns_musTime,
+  ew_musTime_removed      ns_musTime
+);
+
+
+
+-- The parties in the museums (as in, persons or corporations, not a kegger at Dave's house)
+CREATE TABLE ns_Transactions
+(
+  t_charKey              ns_charKey,
+  t_numKey               ns_numKey,
+  t_partyName            ns_partyName,
+  t_musTime_start        ns_musTime,
+  t_transType            ns_transType,
+  
+  t_musTime_end          ns_musTime,
+  t_charKey_other        ns_charKey,
+  t_numKey_other         ns_numKey,
+  t_partyName_other      ns_partyName,
+  t_price                ns_price,
+  t_musDate_deadline     ns_musDate
+);
+
+-- The flight methods
+CREATE TABLE ns_WorksFlightMethod
+(
+  wft_numKey             ns_numKey,
+  wft_charKey            ns_charKey,
+  wft_partyName          ns_partyName,
+  wft_flightMethod       ns_flightMethod
+);
+
+-- The flight methods
+CREATE TABLE ns_WorksPlaneUsage
+(
+  wpu_numKey             ns_numKey,
+  wpu_charKey            ns_charKey,
+  wpu_partyName          ns_partyName,
+  wpu_planeUsage         ns_planeUsage
+);

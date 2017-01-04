@@ -1,0 +1,198 @@
+CREATE OR REPLACE FUNCTION insert_works(num numkey,cha charkey,partyna partyname, name workName, author authorname, creation creationDate, description workdesc, artcat artcategory, artsub artsubcategory, era creationera, purp artifactpurpose, hospdep hospitaldepartment, dep depicts, proto prototype, color colourname, shape shapename, coun country) RETURNS VOID AS $$
+	BEGIN
+		INSERT INTO Works 
+		VALUES 
+			(num,cha,partyna, name, author, creation, description, artcat, artsub, era, purp, hospdep, dep, proto , color, shape, coun)
+		;
+	END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE OR REPLACE FUNCTION insert_worksMedia (num numkey, cha charkey, wparty partyname, wmedia WorksMedia) RETURNS VOID AS $$
+	BEGIN
+		INSERT INTO WorksMedia 
+			(wm_numkey,wm_charkey,wm_partyname,wm_workmedia)
+		VALUES
+			(num,cha,wparty,wmedia)
+		;
+	END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE OR REPLACE FUNCTION insert_worksValue (num numkey, cha charkey, wparty partyname,start musdate,wprice price) RETURNS VOID AS $$
+	BEGIN
+		INSERT INTO worksvalues
+			VALUES
+				(num, cha, wparty, start, wprice)
+		;
+	END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE OR REPLACE FUNCTION insert_workslocations (num numkey, cha charkey, wparty partyname, start mustime, locname locationname, lparty locationname) RETURNS VOID AS $$
+	BEGIN
+		INSERT INTO workslocations
+			(wl_numkey,wl_charkey,wl_partyname_mus,wl_mustime_start,wl_locationname, wl_partyname_loc)
+			VALUES
+				(num, cha, wparty, start, locname, lparty)
+			;
+	END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE OR REPLACE FUNCTION insert_worksflightmethod (n numkey,c charkey,p partyname,flight flightmethod) RETURNS VOID AS $$
+	BEGIN
+		INSERT INTO insert_worksflightmethod
+			VALUES
+				(n,c,p,flight)
+		;
+	END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE OR REPLACE FUNCTION insert_worksplaneusage (n numkey, c charkey, p partyname,use planeusage) RETURNS VOID AS $$
+	BEGIN
+		INSERT INTO worksplaneusage
+			VALUES
+				(n,c,p,use)
+		;
+	END;
+$$ LANGUAGE 'plpgsql';
+
+---transactions
+CREATE OR REPLACE FUNCTION sell_worktoMuseum (c charkey, n numkey,p partyname,start mustime,endt mustime,otherc charkey, othern numkey,otherp partyname,cost price) RETURNS VOID AS $$
+	BEGIN
+		INSERT INTO transactions
+			(t_charkey,t_numkey,t_partyname,t_mustime_start,t_transtype,t_mustime_end,t_charkey_other,t_numkey_other,t_partyname_other,t_price)
+		VALUES
+			(c,n,p,start,'SELL',endt,otherc,othern,otherp,cost),
+			(otherc,othern,otherp,start,'BOUGHT',endt,c,n,p,cost)
+		;
+	END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE OR REPLACE FUNCTION sell_work (c charkey, n numkey,p partyname,start mustime,endt mustime,otherp partyname,cost price) RETURNS VOID AS $$
+	BEGIN
+		INSERT INTO transactions
+			(t_charkey,t_numkey,t_partyname,t_mustime_start,t_transtype,t_mustime_end,t_partyname_other,t_price)
+		VALUES
+			(c,n,p,start,'SELL',endt,otherp,cost)
+		;
+	END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE OR REPLACE FUNCTION buy_worktoMuseum (c charkey, n numkey,p partyname,start mustime,endt mustime,otherc charkey, othern numkey,otherp partyname,cost price) RETURNS VOID AS $$
+	BEGIN
+		INSERT INTO transactions
+			(t_charkey,t_numkey,t_partyname,t_mustime_start,t_transtype,t_mustime_end,t_charkey_other,t_numkey_other,t_partyname_other,t_price)
+		VALUES
+			(c,n,p,start,'BUY',endt,otherc,othern,otherp,cost)
+		;
+	END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE OR REPLACE FUNCTION buy_work (c charkey, n numkey,p partyname,start mustime,endt mustime,otherp partyname,cost price) RETURNS VOID AS $$
+	BEGIN
+		INSERT INTO transactions
+			(t_charkey,t_numkey,t_partyname,t_mustime_start,t_transtype,t_mustime_end,t_partyname_other,t_price)
+		VALUES
+			(c,n,p,start,'BUY',endt,otherp,cost)
+		;
+	END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE OR REPLACE FUNCTION insert_parties (p partyname,str street,ci city, ps provstate, coun country, zip zipcode, ph phone, e email  ) RETURNS VOID AS $$
+	BEGIN
+		INSERT INTO parties
+		VALUES
+			(p,str,ci,ps,coun,zip,ph,e)
+		;
+	END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE OR REPLACE FUNCTION insert_party (p partyname) RETURNS VOID AS $$
+	BEGIN
+		INSERT INTO PARTIES
+			(p_partyname)
+		VALUES
+			(p)
+		;
+	END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE OR REPLACE FUNCTION insert_exhibitionworks (n numkey, c charkey, wparty partyname, exhib exhibname,estart musdate, eparty partyname,adddate mustime) RETURNS VOID AS $$
+	BEGIN
+		INSERT INTO exhibitionworks 
+			(ew_numkey, ew_charkey, ew_partyname_work, ew_exhibname, ew_musdate_start, ew_partyname_exhib, ew_mustime_added)
+		VALUES
+			(n,c,wparty,exhib,estart,eparty,adddate)
+		;
+	END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE OR REPLACE FUNCTION insert_sponsor (sponsor partyname, exhib exhibname,start musdate, eparty partyname) RETURNS VOID AS $$
+	BEGIN
+		INSERT INTO exhibitionsponsor
+			(es_partyname_sponsor, es_exhibname, es_musdate_start, es_partyname_exhib)
+		VALUES
+			(sponsor, exhib, start, eparty)
+		;
+	END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE OR REPLACE FUNCTION insert_staff (staff partyname,work job, exhib exhibname, estart musdate, eparty partyname,staffstart musdate) RETURNS VOID AS $$
+	BEGIN
+		
+		INSERT INTO exhibitionstaff
+			(ex_partyname_staff,ex_job,ex_exhibname,ex_musdate_start,ex_partyname_exhib,ex_musdate_staffstart)
+		VALUES
+			(staff,work,exhib,estart,eparty,staffstart)
+		;
+	END;
+$$ LANGUAGE 'plpgsql';
+
+
+CREATE OR REPLACE FUNCTION insert_exhibitionlocation (exhib exhibname,estart musdate,eparty partyname,loc locationname,lparty partyname, open musdate) RETURNS VOID AS $$
+	BEGIN
+		INSERT INTO insert_exhibitionlocation
+			(el_exhibname, el_musdate_start, el_partyname_exhib, el_locationname, el_partyname_location, el_musdate_open)
+		VALUES
+			(exhib, estart, eparty, loc, lparty, open)
+		;
+	END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE OR REPLACE FUNCTION insert_exhibition (exhib exhibname, start musdate, eparty partyname,ende musdate, descrip exhibdesc , value price, plan planned) RETURNS VOID AS $$
+	BEGIN
+		INSERT INTO exhibitions
+			(e_exhibname, e_musdate_start, e_partyname, e_musdate_end, e_exhibdesc, e_price_insurance, e_planned)
+		VALUES
+			(exhib,start,eparty,ende,descrip,value,plan)
+		;
+	END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE OR REPLACE FUNCTION insert_locations ( loc locationname, lparty partyname,lsrteet street,lcity city,lprovstate provstate,lcountry country,lzip zipcode,lopen musdate,lmin numworks,lmax numworks,llength metres,llwidth metres,lheight metres) RETURNS VOID AS $$
+	BEGIN
+		INSERT INTO Locations
+			(l_locationname, l_partyname, l_street, l_city, l_provstate, l_country, l_zipcode, l_musdate_open, l_numworks_min, l_numworks_max, l_metres_width, l_metres_height, l_metres_length)
+		VALUES
+			(loc, lparty, l_street, lcity, lprovstate, lcountry, lzip, lmin, lmax, lwidth, lheight, llength)
+		;
+	END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE OR REPLACE FUNCTION insert_locations2 ( loc locationname, lparty partyname) RETURNS VOID AS $$
+	BEGIN
+		INSERT INTO Locations
+			(l_locationname, l_partyname)
+		VALUES
+			(loc, lparty)
+		;
+	END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE OR REPLACE FUNCTION insert_doors (loc1 locationname, loc2 locationname, party1 partyname, party2 partyname)  RETURNS VOID AS $$
+	BEGIN
+		INSERT INTO doors 
+			(d_locationname_gallery1,d_locationname_gallery2,d_partyname_gallery1,d_partyname_gallery2)
+		VALUES
+			( loc1, loc2, party1, party2 )
+		;
+	END;
+$$ LANGUAGE 'plpgsql';

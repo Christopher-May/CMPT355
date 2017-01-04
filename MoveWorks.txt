@@ -1,0 +1,367 @@
+--
+-- ADD parties
+--
+INSERT INTO ns_parties
+	(p_partyname)
+SELECT
+	wrbdonor
+FROM
+	WorksBorrow
+;
+
+INSERT INTO ns_parties
+	(p_partyname,p_email,p_street, p_city, p_provstate, p_country, p_zipcode)
+VALUES
+	('Remai Art Gallery of Saskatchewan', 'dsummach@remaimodern.org','102 Spadina Crescent E', 'Saskatoon', 'SK','Canada','s7v2k2'),
+	('Mendel Art Gallery', 'contact@Mendel.ca', '950 Spadina Crescent E', 'Saskatoon', 'SK','Canada','s7k5k5'),
+	( 'Museum of London', 'londonmuseum@hotmail.com', '150 London Wall', 'London','NONE','UK','EC2Y 5HN'),
+	('National Museum of Ireland', 'marketing@museum.ie', 'Kildare St', 'Dublin','NONE', 'Ireland','DC3Y 5HJ')
+;
+	
+--
+-- Moves WorksMedia to new table
+--
+ALTER TABLE Works
+	ADD COLUMN wrpartyname partyName
+;
+UPDATE Works SET
+	wrpartyName = 'Royal Air Force Museum Cosford'
+;
+ALTER TABLE WorksMedia
+	ADD COLUMN Wrmpartyname partyName
+;
+
+UPDATE WorksMedia SET
+	wrmpartyName = 'Royal Air Force Museum Cosford'
+;
+
+INSERT INTO ns_WorksMedia
+	(wm_numkey, wm_charkey, wm_partyname, wm_workmedia)
+SELECT
+	wrmnumkey, wrmcharkey, wrmpartyname, wrmmedia
+FROM
+	WorksMedia
+;
+
+--
+-- Moves WorksType to new table
+--
+
+ALTER TABLE WorksType
+	ADD COLUMN wrtpartyName partyName
+;
+
+UPDATE WorksType SET
+	wrtpartyName = 'Royal Air Force Museum Cosford'
+;
+
+UPDATE WorksType SET
+	wrtmaintype = 'Rotocraft'
+WHERE
+	wrtmaintype = 'Rotercraft'
+;
+UPDATE WorksType SET
+	wrtmaintype = 'Rocketcraft'
+WHERE
+	wrtmaintype = 'RocketCraft'
+;
+
+UPDATE WorksType SET
+	wrtsecondarytype =  'Goods Transporter'
+WHERE
+	wrtsecondarytype =  'Goods Transport'
+;
+UPDATE WorksType SET
+	wrtsecondarytype = 'Troop Transporter'
+WHERE
+	wrtsecondarytype = 'Troop Transport'
+;
+
+INSERT INTO ns_WorksFlightMethod
+	(wft_numKey,wft_CharKey,wft_PartyName,wft_flightMethod)
+SELECT DISTINCT
+	wrtnumkey, wrtcharkey, wrtPartyName, wrtmaintype
+FROM
+	WorksType
+;
+
+INSERT INTO ns_worksplaneusage
+	(wpu_numKey,wpu_CharKey,wpu_PartyName,wpu_planeusage)
+SELECT DISTINCT
+	wrtnumkey, wrtcharkey, wrtPartyName, wrtsecondarytype
+FROM
+	WorksType
+;
+--
+-- Moves WorksLocations to new table
+--
+
+ALTER TABLE WorksLocation
+	ADD COLUMN wrlpartyname partyName,
+	ADD COLUMN wrlpartynameloc partyName
+;
+
+UPDATE WorksLocation SET
+	wrlpartyName = 'Royal Air Force Museum Cosford'
+;
+--change for sold
+UPDATE WorksLocation SET
+	wrlpartynameloc = 'Royal Air Force Museum Cosford'
+;
+
+INSERT INTO ns_WorksLocations
+	( wl_charkey, wl_numkey, wl_partyname_mus, wl_mustime_start, wl_locationname, wl_partyname_loc, wl_mustime_end )
+SELECT
+	wrlcharkey, wrlnumkey, wrlpartyName, wrlstart, wrllocation, wrlpartynameloc, wrlend
+FROM
+	WorksLocation
+;
+
+--
+--Move WorksValues to a new table
+--
+
+INSERT INTO ns_worksValues
+	(wv_numkey, wv_charkey, wv_partyname, wv_price,wv_musdate_start)
+SELECT
+	wrnumkey, wrcharkey, wrpartyName, wrprice, wrretrieved
+FROM 
+	Works
+;
+
+--
+--Move works owner into Worksowner table
+--
+
+INSERT INTO ns_worksOwners
+	(wo_numkey,wo_charkey, wo_partyname, wo_partyName_owner, wo_mustime_start)
+SELECT
+	wrnumkey, wrcharkey, wrpartyName, wrpartyName, wrretrieved
+FROM
+	Works	
+;
+UPDATE ns_worksOwners SET
+	wo_mustime_end =  tsolddate 
+	FROM 
+		transactions 
+	WHERE 
+		wo_numkey = transactions.tnumkey AND 
+		wo_charkey = transactions.tcharkey AND
+		transactions.tsoldbought = 'SELL'		
+;
+INSERT INTO ns_worksOwners
+	(wo_numkey,wo_charkey, wo_partyname, wo_partyName_owner, wo_mustime_start)
+SELECT
+	tnumkey,tcharkey,tpartyname, tparty,tsolddate
+FROM
+	transactions
+WHERE
+	transactions.tsoldbought = 'SELL'
+;
+
+DELETE FROM ns_worksOwners
+	USING
+		WorksBorrow
+	WHERE
+		wo_numkey = WorksBorrow.wrbnumkey AND
+		wo_charkey = WorksBorrow.wrbcharkey AND
+		(WorksBorrow.wrbborrowed = 'Borrowed' OR WorksBorrow.wrbborrowed = 'Avaliable' )
+;
+ALTER TABLE WorksBorrow
+	ADD COLUMN Wrbpartyname partyName
+;
+
+UPDATE WorksBorrow SET
+	wrbpartyName = 'Royal Air Force Museum Cosford'
+;
+
+ALTER TABLE WorksBorrow
+	ADD COLUMN wrbmustimeGiven mustime
+;
+UPDATE WorksBorrow SET
+	wrbmustimeGiven = wrbrecieved - interval'7300 hours' 
+;
+
+INSERT INTO ns_worksOwners
+	(wo_numkey,wo_charkey, wo_partyname, wo_partyName_owner, wo_mustime_start)
+SELECT
+	wrbnumkey, wrbcharkey, wrbpartyName, wrbdonor, wrbmustimeGiven
+FROM
+	WorksBorrow
+WHERE
+	(WorksBorrow.wrbborrowed = 'Borrowed' OR WorksBorrow.wrbborrowed = 'Avaliable' )
+;
+
+--
+-- Move ExhibitionWorks to new table
+--
+
+ALTER TABLE ExhibitionsWorks
+	ADD COLUMN wrpartyname partyName
+;
+UPDATE ExhibitionsWorks SET
+	wrpartyName = 'Royal Air Force Museum Cosford'
+;
+
+INSERT INTO ns_exhibitionWorks
+	(ew_numKey,ew_charKey,ew_partyName_work,ew_exhibName,ew_musDate_start,ew_partyName_exhib, ew_musTime_added)
+SELECT
+	exwnumkey, exwcharkey,wrpartyname, exwname, exwstart, wrpartyname, exwend
+FROM
+	ExhibitionsWorks
+;
+
+--
+-- Move Transactions and works borrow to new table
+--
+
+ALTER TABLE Transactions
+	ADD COLUMN tpartyname partyname,
+	ALTER COLUMN tsoldbought TYPE varchar(75)
+;
+
+UPDATE Transactions SET
+	tpartyname = 'Royal Air Force Museum Cosford'
+;
+
+UPDATE Transactions SET
+	tsoldbought = 'BUY'
+WHERE
+	tsoldbought = 'Bought'
+;
+
+UPDATE Transactions SET
+	tsoldbought = 'SELL'
+WHERE
+	tsoldbought = 'Sold'
+;
+
+UPDATE WorksBorrow SET
+	wrbborrowed = 'LOAN'
+WHERE
+	wrbborrowed = 'Loaned'
+;
+UPDATE WorksBorrow SET
+	wrbborrowed = 'BORROW'
+WHERE
+	wrbborrowed = 'Borrowed'
+;
+
+INSERT INTO ns_transactions
+	(t_charKey,t_numKey,t_partyName,t_musTime_start,t_transType, t_musTime_end,t_partyName_other,t_musDate_deadline)
+SELECT
+	tcharkey, tnumkey,tpartyname, tsolddate, tsoldbought, tsolddate, tparty,tsolddate
+FROM
+	transactions
+;
+INSERT INTO ns_transactions
+	(t_charKey,t_numKey,t_partyName,t_musTime_start, t_musTime_end,t_partyName_other,t_musDate_deadline,t_transType)
+SELECT
+	wrbcharkey, wrbnumkey, wrbpartyName, wrbrecieved, wrbreturned, wrbdonor,wrbreturned,wrbborrowed
+FROM
+	WorksBorrow
+WHERE
+	wrbborrowed = 'BORROW'
+;
+update ns_transactions set t_musTime_start = t_musTime_start - time '11:59';
+update ns_transactions set t_musTime_end = t_musTime_end - time '11:59'; 
+
+--
+-- INSERT WORKS
+--
+
+--add countries
+ALTER TABLE Works
+	ADD COLUMN wrcountry ns_country
+;
+ALTER TABLE Works
+	ADD COLUMN wrcountryletter CHAR(1)
+;
+UPDATE Works SET
+	wrcountryletter = right(wrcharkey,1)
+;
+UPDATE Works SET
+	wrcountry = 'Britain'
+WHERE
+	wrcountryletter = 'B'
+;
+UPDATE Works SET
+	wrcountry = 'France'
+WHERE
+	wrcountryletter = 'F'
+;
+UPDATE Works SET
+	wrcountry = 'Russia'
+WHERE
+	wrcountryletter = 'R'
+;
+UPDATE Works SET
+	wrcountry = 'Germany'
+WHERE
+	wrcountryletter = 'G'
+;
+UPDATE Works SET
+	wrcountry = 'Japan'
+WHERE
+	wrcountryletter = 'J'
+;
+UPDATE Works SET
+	wrcountry = 'New Zealand'
+WHERE
+	wrcountryletter = 'Z'
+;
+UPDATE Works SET
+	wrcountry = 'Canada'
+WHERE
+	wrcountryletter = 'C'
+;
+UPDATE Works SET
+	wrcountry = 'Portugal'
+WHERE
+	wrcountryletter = 'P'
+;
+UPDATE Works SET
+	wrcountry = 'Ukraine'
+WHERE
+	wrcountryletter = 'U'
+;
+UPDATE Works SET
+	wrcountry = 'United States of America'
+WHERE
+	wrcountryletter = 'A'
+;
+UPDATE Works SET
+	wrcountry = 'Spain'
+WHERE
+	wrcountryletter = 'S'
+;
+UPDATE Works SET
+	wrcountry = 'Italy'
+WHERE
+	wrcountryletter = 'I'
+;
+
+INSERT INTO ns_Works
+	(w_numkey,w_charkey,w_partyname,w_workname,w_authorname,w_creationdate,w_workdesc,w_country)
+SELECT
+	wrnumkey, wrcharkey,wrpartyname,wrname, wrattributed, wrcreated,wrdescription,wrcountry
+FROM
+	Works
+;
+UPDATE ns_works SET
+	w_creationera = 'Modern'
+;
+UPDATE ns_works SET
+	w_prototype = FALSE
+;
+UPDATE ns_works SET
+	w_prototype = TRUE
+FROM
+	WorksType
+WHERE
+	w_numkey = WorksType.wrtnumkey AND
+	w_charkey = WorksType.wrtcharkey AND
+	WorksType.wrtsecondarytype = 'Prototype'
+;
+
+

@@ -1,0 +1,63 @@
+CREATE OR REPLACE FUNCTION workslocations_prev(date1 musdate, date2 musdate) RETURNS TABLE(wrcharkey charkey, wrnumkey numkey,wparty partyname,start mustime, endt mustime,location locationname) AS $$
+	BEGIN
+		RETURN QUERY
+			SELECT
+				wl_charkey, wl_numkey, wl_partyname_mus, wl_mustime_start,wl_mustime_end, wl_locationname
+			FROM
+				workslocations
+			WHERE
+				wl_mustime_start >= date1 AND
+				wl_mustime_start <= date2
+		;
+	END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE OR REPLACE FUNCTION worksexhibitions_prev(date1 musdate, date2 musdate) RETURNS TABLE(wrcharkey charkey, wrnumkey numkey,wparty partyname,start mustime,exhibition exhibname) AS $$
+	BEGIN
+		RETURN QUERY
+			SELECT
+				ew_charkey, ew_numkey, ew_partyname_work, ew_mustime_added, ew_exhibname
+			FROM
+				exhibitionworks
+			WHERE
+				ew_mustime_added >= date1 AND
+				ew_mustime_added <= date2
+		;
+	END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE OR REPLACE FUNCTION exhibitionslocations_prev(date1 musdate, date2 musdate) RETURNS TABLE( exhib exhibname,start musdate,party partyname,location locationname) AS $$
+	BEGIN
+		RETURN QUERY
+			SELECT
+				el_exhibname, el_musdate_start, el_partyname_exhib, el_locationname
+			FROM
+				exhibitionlocations
+			WHERE
+				el_musdate_start >= date1 AND
+				el_musdate_start <= date2
+		;
+	END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE OR REPLACE FUNCTION loan_worktoMuseum (c charkey, n numkey,p partyname,start mustime,endt mustime,otherc charkey, othern numkey,otherp partyname,cost price) RETURNS VOID AS $$
+	BEGIN
+		INSERT INTO transactions
+			(t_charkey,t_numkey,t_partyname,t_mustime_start,t_transtype,t_mustime_end,t_charkey_other,t_numkey_other,t_partyname_other,t_price)
+		VALUES
+			(c,n,p,start,'LOAN',endt,otherc,othern,otherp,cost),
+			(otherc,othern,otherp,start,'BORROW',endt,c,n,p,cost)
+			
+		;
+	END;
+$$ LANGUAGE 'plpgsql';
+
+CREATE OR REPLACE FUNCTION loan_work (c charkey, n numkey,p partyname,start mustime,endt mustime,otherp partyname,cost price) RETURNS VOID AS $$
+	BEGIN
+		INSERT INTO transactions
+			(t_charkey,t_numkey,t_partyname,t_mustime_start,t_transtype,t_mustime_end,t_partyname_other,t_price)
+		VALUES
+			(c,n,p,start,'LOAN',endt,otherp,cost)
+		;
+	END;
+$$ LANGUAGE 'plpgsql';
