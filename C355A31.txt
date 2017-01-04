@@ -1,0 +1,73 @@
+--Top up exhibitions
+INSERT INTO exhibitionsworks
+	VALUES
+	('WW1 and WW2 Propeller','2016-10-28','2016-12-01','BVG',2),
+	('WW1 and WW2 Propeller','2016-10-28','2016-12-01','ATB',2),
+	('WW1 and WW2 Propeller','2016-10-28','2016-12-01','BTB',2),
+	('WW1 and WW2 Propeller','2016-10-28','2016-12-01','SRB',2),
+	('WW1 and WW2 Propeller','2016-10-28','2016-12-01','MSB',2),
+	('WW1 and WW2 Propeller','2016-10-28','2016-12-01','YOJ',2),
+	('Planes of Battle','2016-10-28','2017-03-01','KAJ',2),
+	('Planes of Battle','2016-10-28','2017-03-01','BBB',3),
+	('Planes of Battle','2016-10-28','2017-03-01','CSC',3),
+	('Planes of Battle','2016-10-28','2017-03-01','ECB',3),
+	('Planes of Battle','2016-10-28','2017-03-01','BAB',3),
+	('Planes of Battle','2016-10-28','2017-03-01','DCC',3),
+	('Planes of Battle','2016-10-28','2017-03-01','LEB',3),
+	('Planes of Battle','2016-10-28','2017-03-01','SJF',3),
+	('Planes of Battle','2016-10-28','2017-03-01','MUS',3),
+	('Planes of Battle','2016-10-28','2017-03-01','AMB',1),
+	('WWII Planes','2016-12-01','2016-12-05','BBG',2),
+	('WWII Planes','2016-12-01','2016-12-05','PZS',2),
+	('WWII Planes','2016-12-01','2016-12-05','CIB',2),
+	('WWII Planes','2016-12-01','2016-12-05','NNJ',2),
+	('WWII Planes','2016-12-01','2016-12-05','POP',2),
+	('WWII Planes','2016-12-01','2016-12-05','MKJ',2),
+	('Planes with jets','2017-02-01','2017-02-06','AYB',3),
+	('Planes with jets','2017-02-01','2017-02-06','TPB',3),
+	('Planes with jets','2017-02-01','2017-02-06','CSC',3),
+	('Planes from Britain','2017-03-01','2017-03-04','BBB',3),
+	('Planes from Britain','2017-03-01','2017-03-04','GMB',3),
+	('Planes from Britain','2017-03-01','2017-03-04','LEB',3),
+	('Planes from Britain','2017-03-01','2017-03-04','AMB',1),
+	('Planes from Britain','2017-03-01','2017-03-04','ATB',2),
+	('Planes from Britain','2017-03-01','2017-03-04','ELB',3),
+	('Planes from Britain','2017-03-01','2017-03-04','CIB',2)
+;
+
+INSERT INTO workslocation (wrlCharKey,wrlNumKey,wrlLocation,wrlStart)
+	VALUES
+	('ATB',2,'Gallery A','2016-10-31'),
+	('BTB',2,'Gallery A','2016-10-31'),
+	('SRB',2,'Gallery A','2016-10-31'),
+	('MSB',2,'Gallery A','2016-10-31'),
+	('YOJ',2,'Gallery C','2016-10-31'),
+	('BBB',3,'Gallery C','2016-10-31'),
+	('CSC',3,'Gallery C','2016-10-31'),
+	('ECB',3,'Gallery C','2016-10-31'),
+	('DAA',3,'Gallery C','2016-10-31'),
+	('DXA',3,'Gallery C','2016-10-31'),
+	('LEB',3,'Gallery C','2016-10-31'),
+	('SJF',3,'Gallery C','2016-10-31'),
+	('MUS',3,'Gallery C','2016-10-31'),
+	('AMB',1,'Gallery C','2016-10-31')
+;
+DROP VIEW updatedExhibitions;
+
+CREATE VIEW updatedExhibitions
+	AS SELECT DISTINCT
+		exlName AS "Exhibition Name",
+		exlStart AS "Exhibition Start Date",
+		exlEnd AS "Exhibition End Date",
+		(SELECT COUNT(exwName)
+		FROM exhibitionsworks
+		WHERE exlName=exwName) AS "Number of Works",
+		mlMax AS "Maximum Number of Works"
+	FROM
+		exhibitionsLocations e,
+		
+		locations l
+	WHERE
+		e.exlLocation = mlName
+;
+SELECT * FROM updatedExhibitions;

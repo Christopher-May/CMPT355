@@ -1,0 +1,107 @@
+DROP DOMAIN locationstime;
+CREATE DOMAIN locationstime AS timestamp;
+
+ALTER TABLE workslocation
+	ALTER COLUMN wrlStart TYPE locationstime,
+	ALTER COLUMN wrlEnd TYPE locationstime
+;
+
+update workslocation set wrlstart = wrlstart - time '11:59';
+update workslocation set wrlend = wrlend - time '11:59'; 
+
+INSERT INTO exhibitions 
+	VALUES
+	('Sporting Planes','Planes that are used for sports!'),
+	('Planes From Post WW2','Planes made after the second world war!'),
+	('Pre WW1 Planes','Planes made before the Great War!')
+;
+INSERT INTO exhibitionslocations
+	VALUES
+	('Sporting Planes','2016-02-01','2016-08-27','Gallery B'),
+	('Planes From Post WW2','2016-02-01','2016-07-27','Gallery C'),
+	('Pre WW1 Planes','2016-03-01','2016-06-28','Gallery A')
+;
+INSERT INTO exhibitionsworks
+	VALUES
+	('Sporting Planes','2016-02-01','2016-08-27','SAB',1),
+	('Sporting Planes','2016-02-01','2016-08-27','DDB',1),
+	('Sporting Planes','2016-02-01','2016-08-27','HCF',1),
+	('Sporting Planes','2016-02-01','2016-08-27','ADB',1),
+	('Sporting Planes','2016-02-01','2016-08-27','FAA',2),
+	('Sporting Planes','2016-02-01','2016-08-27','CMF',1),
+	('Sporting Planes','2016-02-01','2016-08-27','SSB',2),
+	('Sporting Planes','2016-02-01','2016-08-27','DOC',3),
+	('Planes From Post WW2','2016-02-01','2016-07-27','BHB',3),
+	('Planes From Post WW2','2016-02-01','2016-07-27','GJB',3),
+	('Planes From Post WW2','2016-02-01','2016-07-27','GEB',3),
+	('Planes From Post WW2','2016-02-01','2016-07-27','BSB',3),
+	('Planes From Post WW2','2016-02-01','2016-07-27','ELB',3),
+	('Planes From Post WW2','2016-02-01','2016-07-27','FPA',3),
+	('Planes From Post WW2','2016-02-01','2016-07-27','HUB',3),
+	('Planes From Post WW2','2016-02-01','2016-07-27','CSC',3),
+	('Planes From Post WW2','2016-02-01','2016-07-27','FGB',3),
+	('Planes From Post WW2','2016-02-01','2016-07-27','BCB',3),
+	('Planes From Post WW2','2016-02-01','2016-07-27','BBB',3),
+	('Planes From Post WW2','2016-02-01','2016-07-27','TPB',3),
+	('Planes From Post WW2','2016-02-01','2016-07-27','HVB',3),
+	('Planes From Post WW2','2016-02-01','2016-07-27','VVB',3),
+	('Planes From Post WW2','2016-02-01','2016-07-27','AYB',3),
+	('Pre WW1 Planes','2016-03-01','2016-06-28','BMB',1),
+	('Pre WW1 Planes','2016-03-01','2016-06-28','SOB',1),
+	('Pre WW1 Planes','2016-03-01','2016-06-28','SPB',1),
+	('Pre WW1 Planes','2016-03-01','2016-06-28','BPB',1),
+	('Pre WW1 Planes','2016-03-01','2016-06-28','GWB',1),
+	('Pre WW1 Planes','2016-03-01','2016-06-28','TTI',1),
+	('Pre WW1 Planes','2016-03-01','2016-06-28','GMG',1)
+;
+DROP VIEW locationsDate;
+DROP VIEW worksDate;
+DROP VIEW exhibitionsDate;
+
+CREATE VIEW locationsDate
+	AS SELECT
+		wrllocation
+	FROM 
+		workslocation
+	WHERE
+		wrlCharKey= 'AAB' AND
+		wrlNumKey = '2'
+;
+SELECT * 
+FROM 
+	locationsdate;
+CREATE VIEW worksDate
+	AS SELECT
+		wrlCharKey AS "CHAR KEY",
+		wrlNumKey AS "NUM KEY"
+	FROM 
+		workslocation
+	WHERE
+		wrlStart BETWEEN '2015-11-01 00:00:00' AND '2016-11-01 00:00:00' AND
+		wrllocation ='Gallery A' OR
+		wrllocation ='Gallery B' OR
+		wrllocation ='Gallery C'
+;
+SELECT * 
+FROM
+	worksDate
+;
+CREATE VIEW exhibitionsDate
+	AS SELECT
+		exlName AS "Exhibition Name",
+		exlStart AS "Start Date",
+		exlEnd AS "End Date",
+		exlLocation AS "Location"
+	FROM 
+		exhibitionslocations
+	WHERE
+		exlStart BETWEEN '2015-11-01 00:00:00' AND '2016-11-01 00:00:00'
+	ORDER BY
+		exlStart
+;
+SELECT * 
+FROM
+	exhibitionsDate
+;
+		
+		

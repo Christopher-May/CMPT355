@@ -1,0 +1,27 @@
+DROP TRIGGER calc_distruption_cost ON exhibitionslocations;
+CREATE OR REPLACE FUNCTION calc_distr_cost() RETURNS TRIGGER AS $calc_distr_cost$
+ DECLARE
+	exhibs RECORD;
+	lowestCost integer;
+	datespos integer;
+	datesneg integer;
+	dateseq integer;
+ BEGIN
+	IF exlSpecial =1 THEN
+		SELECT *,
+			CASE
+			WHEN (exlEnd::date - NEW.exlStart::date)>5 THEN (exlEnd::date - NEW.exlStart::date)*3
+			WHEN (NEW.exlStart::date - exlEnd::date)>5 THEN (NEW.exlStart::date-exlEnd::date)*2
+			WHEN (exlEnd::date - NEW.exlStart::date)<5 THEN (exlEnd::date - NEW.exlStart::date)*5
+			WHEN (NEW.exlStart::date - exlEnd::date)<5 THEN ((NEW.exlStart::date-exlEnd::date)
+			ELSE (exlEnd::date - exlStart::date)
+		END AS DCost
+		FROM exhibitionslocations;
+	END IF;
+	RETURN NEW;
+ END;
+$calc_distr_cost$ LANGUAGE plpgsql;
+
+CREATE TRIGGER calc_distruption_cost
+BEFORE INSERT OR UPDATE OR DELETE ON exhibitionslocations
+    FOR EACH ROW EXECUTE PROCEDURE calc_distr_cost();

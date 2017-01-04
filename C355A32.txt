@@ -1,0 +1,145 @@
+--Add Bought Works 
+INSERT INTO works (wrCharKey,wrNumKey,wrName,wrAttributed,wrCreated,wrRetrieved,wrPrice,wrDescription)
+	VALUES
+	('TTI',1,'Etrich Taube','Igo Etrich','1909-10-18','2016-10-25',700000,'The Taube was very popular prior to the First World War, and it was also used by the air forces of Italy and Austria-Hungary. Even the Royal Flying Corps operated at least one Taube in 1912. On November 1, 1911, Giulio Gavotti, an Italian aviator, dropped the worlds first aerial bomb from his Taube monoplane over the Ain Zara oasis in Libya.'),
+	('ALB',1,'ASL Valkyrie','Aeronautical Syndicate Ltd','1910-10-12','2016-10-25',730000,'The ASL Valkyrie was a canard pusher configuration aircraft designed by the Aeronautical Syndicate Ltd in 1910. Examples were widely flown during 1911 and were used for instructional purposes at the ASL flying school, which was the first occupant of Hendon Aerodrome in London.'),
+	('GMG',1,'Grade monoplane','Grade','1909-08-12','2016-10-25',760000,'The Grade monoplane was a single-seat aircraft constructed by Hans Grade in 1909. It was the first successful heavier-than-air aircraft produced in Germany, and around 80 were eventually built.'),
+	('CMF',1,'Caudron Type M','Caudron','1912-03-14','2016-10-25',550000,'The Caudron Types M and N were small, fast French sports monoplanes, flown 1911,13 under a wide range of engine powers. There was also a military version.'),
+	('BPB',1,'Bristol Prier monoplane','Bristol Aeroplane Company','1911-06-23','2016-10-25',650000,'Unsurprisingly, the Bristol Prier monoplanes resembled the successful Blériot XI monoplane, with a fabric-covered wire-braced wood fuselage and parallel-chord wings using wing-warping for lateral control, although differing in details. The all-moving tailplane was an elongated fan-shape, mounted in a mid-position between the upper and lower longerons, and the undercarriage had a pair of wheels on an axle mounted onto a pair of forward-projecting skids.'),
+	('ADB',1,'Avro Type D','Avro','1911-05-15','2016-10-25',690000,'The Avro Type D was an aircraft built in 1911 by the pioneer British aircraft designer A.V. Roe. Roe had previously built and flown several aircraft at Brooklands, most being tractor layout triplanes. The Type D was his first biplane.'),
+	('HCF',1,'Hydeoa Aeroplane','Caudron','1911-02-11','2016-10-25',800000,'The Hydeoa Aeroplane was a French amphibious seaplane which competed in the 1912 Manaco Event. It was one of the first amphibious seplanes.'),
+	('WBA',1,'Wright Model B','Wright Company','1910-12-02','2016-10-25',1000000,'The Wright Model B was an early pusher biplane designed by the Wright brothers in the United States in 1910. It was the first of their designs to be built in quantity. Unlike the Model A, it featured a true elevator carried at the tail rather than at the front. It was the last Wright model to have an open-frame tail. The Model B was a dedicated two-seater with the pilot and a passenger sitting side-by-side on the leading edge of the lower wing.'),
+	('GWB',1,'Grahame-White Type VII','J.D. North','1913-07-13','2016-10-25',500000,'The Graham-White Type VII "Popular" was an early British aircraft designed by J.D. North and built by the Grahame-White Aviation company, with the intention of producing a low-cost aircraft to popularize aviation. It was initially produced with a 35 hp Anzani 3-cylinder Y configuration engine and offered for sale at a price of less than £400. Despite its low price the aircraft included structural refinements such as hollow-section interplane struts. It was first flown in 1913.'),
+	('HPB',1,'Handley Page Type G','Handley Page Limited','1912-07-13','2016-10-25',570000,'The Handley Page Type G was a two-seat British biplane, designed by Handley Page that first flew in 1913. Only one was built.'),
+	('VRB',1,'Vickers R.E.P. Type Monoplane','Vickers, Sons & Maxim','1911-05-13','2016-10-25',10000000,'The Vickers R.E.P. Type Monoplanes were a series of single-engined monoplane aircraft built by Vickers prior to the outbreak of the First World War. They were developed from a French design for which Vickers had purchased a license, with eight being bu'),
+	('MMB',1,'Mersey Monoplane','Planes Limited','1910-10-12','2016-10-25',800000,'The Mersey Monoplane was a prototype two-seat British pusher configuration monoplane of the early 1910s. A single example was built and entered into the 1912 British Military Aeroplane Competition but crashed during the trials and was destroyed.'),
+	('MBF',1,'Morane-Borel monoplane','Morane brothers','1911-06-08','2016-10-25',760000,'The Morane-Borel monoplane (sometimes referred to with the retronym Morane-Saulnier Type A or simply the Morane monoplane) was an early French single-engine, single-seat aircraft. It was flown in several European air races.'),
+	('LBF',1,'Blaoriot XII','Louis Blaoriot','1909-11-12','2016-10-25',900000,'The Blériot XII was an early French aeroplane built by Louis Blariot. It was first flown in May 1909 and was the first aircraft to be flown with two passengers on board, and was used by Blériot to gain second place in the 1909 Gordon Bennett Cup and to set a new world speed record.'),
+	('SBB',1,'Short Biplane No. 2','Short Brothers','1909-09-19','2016-10-25',950000,'The Short No.2 was an early British aircraft built by Short Brothers for J.T.C. Moore-Brabazon. It was used by him to win the £1,000 prize offered by the Daily Mail newspaper for the first closed-circuit flight of over a mile (1.6 km) to be made in a British aircraft.')
+;
+INSERT INTO worksType
+	VALUES
+	('TTI',1,'Propeller','Fighter'),
+	('ALB',1,'Propeller','Prototype'),
+	('ALB',1,'Propeller','Bomber'),
+	('GMG',1,'Propeller','Sporting'),
+	('CMF',1,'Propeller','Sporting'),
+	('BPB',1,'Propeller','Sporting'),
+	('HCF',1,'Propeller','Sporting'),
+	('ADB',1,'Propeller','Sporting'),
+	('WBA',1,'Propeller','Sporting'),
+	('GWB',1,'Propeller','Sporting'),
+	('HPB',1,'Propeller','Prototype'),
+	('VRB',1,'Propeller','Training'),
+	('MMB',1,'Propeller','Prototype'),
+	('MBF',1,'Propeller','Sporting'),
+	('SBB',1,'Propeller','Prototype')
+;
+INSERT INTO worksMedia
+	VALUES
+	('TTI',1,'Wood'),
+	('ALB',1,'Wood'),
+	('GMG',1,'Wood'),
+	('CMF',1,'Wood'),
+	('BPB',1,'Fabric'),
+	('HCF',1,'Metal'),
+	('WBA',1,'Wood'),
+	('GWB',1,'Wood'),
+	('HPB',1,'Wood'),
+	('VRB',1,'Wood'),
+	('MMB',1,'Wood'),
+	('ADB',1,'Wood'),
+	('MBF',1,'Wood'),
+	('SBB',1,'Wood')
+;
+INSERT INTO worksLocation
+	VALUES
+	('TTI',1,'Storage','2016-10-31'),
+	('ALB',1,'Storage','2016-10-31'),
+	('GMG',1,'Storage','2016-10-31'),
+	('CMF',1,'Storage','2016-10-31'),
+	('BPB',1,'Storage','2016-10-31'),
+	('HCF',1,'Storage','2016-10-31'),
+	('ADB',1,'Storage','2016-10-31'),
+	('WBA',1,'Storage','2016-10-31'),
+	('GWB',1,'Storage','2016-10-31'),
+	('HPB',1,'Storage','2016-10-31'),
+	('VRB',1,'Storage','2016-10-31'),
+	('MMB',1,'Storage','2016-10-31'),
+	('MBF',1,'Storage','2016-10-31'),
+	('SBB',1,'Storage','2016-10-31')
+;
+--Sell Works
+INSERT INTO workslocation (wrlCharKey,wrlNumKey,wrlLocation,wrlStart)
+	VALUES
+	('FGB',3,'SOLD','2016-10-21'),
+	('KKJ',2,'SOLD','2016-10-21'),
+	('VVB',3,'SOLD','2016-10-21')
+;
+--CREATE TRANSACTIONS TABLE
+DROP DOMAIN partyName CASCADE;
+DROP DOMAIN partyEmail CASCADE;
+DROP DOMAIN partyAds CASCADE;
+DROP DOMAIN buySold CASCADE;
+DROP TABLE transactions CASCADE;
+
+CREATE DOMAIN partyName AS varchar(50);
+CREATE DOMAIN partyEmail AS varchar(75);
+CREATE DOMAIN buySold AS varchar(50)
+	CHECK (VALUE IN('Bought','Sold'));
+CREATE DOMAIN partyAds AS varchar(100);
+
+CREATE TABLE transactions (
+	tCharKey workschar,
+	tNumKey worksnum,
+	tSoldBought buySold,
+	tParty partyName,
+	tPartyEmail partyEmail,
+	tPartyAddress partyAds,
+	tSoldDate timeof,
+	FOREIGN KEY (tCharKey,tNumKey) REFERENCES Works (wrCharKey,wrNumKey),
+	PRIMARY KEY (tCharKey,tNumKey,tPartyEmail)
+);
+INSERT INTO transactions
+	VALUES
+('TTI',1,'Bought','Western Development Museum','saskatoon@wdm.ca','2610 Lorne Ave Saskatoon, SK,Canada','2016-10-25'),
+('ALB',1,'Bought','Western Development Museum','saskatoon@wdm.ca','2610 Lorne Ave Saskatoon, SK,Canada','2016-10-25'),
+('GMG',1,'Bought','Western Development Museum','saskatoon@wdm.ca','2610 Lorne Ave Saskatoon, SK,Canada','2016-10-25'),
+('CMF',1,'Bought','Remai Art Gallery of Saskatchewan','dsummach@remaimodern.org','102 Spadina Crescent E, Saskatoon, SK,Canada','2016-10-25'),
+('BPB',1,'Bought','Museum of London','londonmuseum@hotmail.com','150 London Wall, London EC2Y 5HN, UK','2016-10-25'),
+('HCF',1,'Bought','Museum of London','londonmuseum@hotmail.com','150 London Wall, London EC2Y 5HN, UK','2016-10-25'),
+('ADB',1,'Bought','Museum of London','londonmuseum@hotmail.com','150 London Wall, London EC2Y 5HN, UK','2016-10-25'),
+('WBA',1,'Bought','Museum of London','londonmuseum@hotmail.com','150 London Wall, London EC2Y 5HN, UK','2016-10-25'),
+('GWB',1,'Bought','Remai Art Gallery of Saskatchewan','dsummach@remaimodern.org','102 Spadina Crescent E, Saskatoon, SK,Canada','2016-10-25'),
+('HPB',1,'Bought','Remai Art Gallery of Saskatchewan','dsummach@remaimodern.org','102 Spadina Crescent E, Saskatoon, SK,Canada','2016-10-25'),
+('VRB',1,'Bought','National Museum of Ireland','marketing@museum.ie','Kildare St, Dublin 2, Ireland','2016-10-25'),
+('MMB',1,'Bought','National Museum of Ireland','marketing@museum.ie','Kildare St, Dublin 2, Ireland','2016-10-25'),
+('MBF',1,'Bought','National Museum of Ireland','marketing@museum.ie','Kildare St, Dublin 2, Ireland','2016-10-25'),
+('LBF',1,'Bought','National Museum of Ireland','marketing@museum.ie','Kildare St, Dublin 2, Ireland','2016-10-25'),
+('SBB',1,'Bought','National Museum of Ireland','marketing@museum.ie','Kildare St, Dublin 2, Ireland','2016-10-25'),
+('FGB',3,'Sold','Western Development Museum','saskatoon@wdm.ca','2610 Lorne Ave Saskatoon, SK,Canada','2016-10-21'),
+('KKJ',2,'Sold','Mendel Art Gallery','contact@Mendel.ca','950 Spadina Crescent E, Saskatoon, SK,Canada','2016-10-21'),
+('VVB',3,'Sold','Remai Art Gallery of Saskatchewan','dsummach@remaimodern.org','102 Spadina Crescent E, Saskatoon, SK,Canada','2016-10-21')
+;
+
+--Create Views
+
+CREATE VIEW showtrans
+	AS SELECT
+		tCharKey AS "CharKey",
+		tNumKey AS "NumKey",
+		tSoldBought AS "Sold or Bought",
+		tParty AS "Parties Name",
+		tPartyEmail AS "Parties Email",
+		tPartyAddress AS "Parties Address",
+		tSoldDate AS "Date of Transaction"
+	FROM
+		transactions
+;
+
+SELECT *
+FROM
+	showtrans
+;
+
+		

@@ -1,0 +1,103 @@
+--Create domains
+
+DROP DOMAIN addressoftemp;
+DROP TABLE locationsTemp CASCADE;
+DROP DOMAIN locations;
+CREATE DOMAIN addressoftemp AS varchar(100);
+CREATE DOMAIN locations AS varchar(50);
+--Create table
+--For some reason locations is giving me an error so im using nameof :)
+
+CREATE TABLE locationsTemp(
+	ltExhibitionName nameof REFERENCES exhibitions(exName),
+	ltLocation nameof,
+	ltAddress addressofTemp,
+	ltSponsor nameof,
+	ltSecurity nameof,
+	ltInsuranceValue workPrice,
+	ltStartDate timeof,
+	ltEndDate timeof,
+	PRIMARY KEY (ltExhibitionName,ltAddress)
+); 
+
+-- I don't think having a trigger for the start date would be good incase it takes more than 1 week to move the exhibition 
+
+
+INSERT INTO locationsTemp
+	VALUES
+	('WW1 and WW2 Propeller','Saskatoon','3515 Thatcher Ave, Saskatoon, SK S7R 1C4','John Doe','Jacob P. Katz',99999999999,'2016-12-08','2016-12-29'),
+	('WW1 and WW2 Propeller','Regina','1700 Elphinstone Street P.O. Box 167 Regina, Saskatchewan S4P 2Z6 Canada','Jane Doe','Jacob P. Katz',99999999999,'2017-01-04','2017-01-25'),
+	('WW1 and WW2 Propeller','Prince Albert','888 Central Ave, Prince Albert, SK S6V 4V1','Al Coholic','Jacob P. Katz',99999999999,'2017-02-01','2017-02-22'),
+	('WW1 and WW2 Propeller','Moose Jaw','110 1 Ave NW, Moose Jaw, SK S6H 0Y8','Heywood Yapinchme','Jacob P. Katz',99999999999,'2017-03-01','2017-03-08'),
+	('WW1 and WW2 Propeller','Swift Current','1401 North Service Rd E Swift Current, SK S9H 3X6 Canada.','I.P. Freely','Jacob P. Katz',99999999999,'2017-03-15','2017-04-06')
+;
+DROP TRIGGER calculate_cost ON locationsTemp;
+CREATE OR REPLACE FUNCTION calc_cost() RETURNS TRIGGER AS $calc_cost$
+ BEGIN
+	IF NEW.ltInsuranceValue >= (SELECT SUM(wrprice) 
+				FROM
+					works w,
+					locationsTemp lt,
+					exhibitionsworks exw
+				WHERE
+					w.wrCharKey=exw.exwCharKey AND
+					w.wrNumKey=exw.exwNumKey AND
+					exw.Start= lt.ltStartDate AND
+					exw.exwName = lt.ltExhibitionName
+				)*1.1 THEN
+		RETURN NEW;
+	END IF;
+RETURN NULL;
+ END;
+$calc_cost$ LANGUAGE plpgsql;
+
+CREATE TRIGGER calculate_cost
+BEFORE INSERT OR UPDATE OR DELETE ON locationsTemp
+    FOR EACH ROW EXECUTE PROCEDURE calc_cost();
+INSERT INTO exhibitionsworks
+	VALUES
+	('WW1 and WW2 Propeller','2016-12-08','2017-04-06','ALB',2),
+	('WW1 and WW2 Propeller','2016-12-08','2017-04-06','AVF',2),
+	('WW1 and WW2 Propeller','2016-12-08','2017-04-06','BTB',2),
+	('WW1 and WW2 Propeller','2016-12-08','2017-04-06','BVG',2),
+	('WW1 and WW2 Propeller','2016-12-08','2017-04-06','FAA',2),
+	('WW1 and WW2 Propeller','2016-12-08','2017-04-06','FSG',2),
+	('WW1 and WW2 Propeller','2016-12-08','2017-04-06','HHB',2),
+	('WW1 and WW2 Propeller','2016-12-08','2017-04-06','MSB',2),
+	('WW1 and WW2 Propeller','2016-12-08','2017-04-06','SCB',2),
+	('WW1 and WW2 Propeller','2016-12-08','2017-04-06','PZS',2),
+	('WW1 and WW2 Propeller','2016-12-08','2017-04-06','TUR',2),
+	('WW1 and WW2 Propeller','2016-12-08','2017-04-06','FLG',2),
+	('WW1 and WW2 Propeller','2016-12-08','2017-04-06','MKG',2)
+;
+
+CREATE VIEW traveling
+	AS SELECT
+		ltExhibitionName AS "Exhibition Name",
+		ltLocation AS "Location",
+		ltSponsor AS "Sponsor",
+		ltSecurity AS "Security Officer",
+		ltInsuranceValue AS "Insurance Coverage",
+		ltStartDate AS "Start Date",
+		ltEndDate AS "End Date"
+	FROM
+		locationsTemp
+;
+SELECT * 
+FROM
+	traveling
+;
+CREATE VIEW travelingWorks
+	AS SELECT
+		exwCharKey AS "CHAR KEY",
+		exwNumKey AS "NUM KEY"
+	FROM
+		exhibitionsworks
+	WHERE
+		exwName = 'WW1 and WW2 Propeller' AND
+		exwStart = '2016-12-08'
+;
+SELECT * 
+FROM 
+	travelingWorks
+;

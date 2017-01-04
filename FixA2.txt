@@ -1,0 +1,60 @@
+--fix workslocation
+INSERT INTO worksLocation
+	VALUES
+	('AYB',3,'Gallery B','2016-08-01'),
+	('DDA',2,'Gallery B','2016-08-01'),
+	('GJB',3,'Gallery C','2016-09-01'),
+	('HHB',2,'Gallery B','2016-08-01'),
+	('TPB',3,'Gallery B','2016-08-01'),
+	('ATB',2,'Gallery A','2016-07-01'),
+	('BCB',3,'Gallery C','2016-09-01'),
+	('GEB',3,'Gallery C','2016-09-01'),
+	('SSB',2,'Gallery B','2016-08-01'),
+	('ALB',2,'Gallery A','2016-07-01'),
+	('BHB',3,'Gallery C','2016-09-01'),
+	('BMB',1,'Gallery C','2016-09-01'),
+	('PCA',2,'Gallery B','2016-08-01'),
+	('FSG',2,'Gallery A','2016-07-01'),
+	('FPA',3,'Gallery C','2016-09-01'),
+	('FGB',3,'Gallery C','2016-09-01'),
+	('HIB',2,'Gallery C','2016-09-01'),
+	('MKG',2,'Gallery A','2016-07-01'),
+	('MKJ',2,'Gallery C','2016-09-01'),
+	('SOB',1,'Gallery A','2016-07-01'),
+	('SPB',1,'Gallery A','2016-07-01'),
+	('SFB',2,'Gallery C','2016-09-01'),
+	('AAB',2,'Gallery B','2016-08-01'),
+	('ANB',2,'Gallery C','2016-09-01'),
+	('BSB',3,'Gallery C','2016-09-01'),
+	('SCB',2,'Gallery A','2016-07-01'),
+	('DDB',2,'Gallery B','2016-08-01'),
+	('FAA',2,'Gallery A','2016-07-01'),
+	('AAI',2,'Gallery C','2016-09-01'),
+	('AVF',2,'Gallery A','2016-07-01'),
+	('DOC',3,'Gallery B','2016-08-01')
+;
+
+UPDATE worksLocation 
+SET wrlStart= works.wrRetrieved 
+FROM works 
+WHERE wrlCharKey=wrCharKey AND 
+wrlNumKey=wrNumKey ;
+
+--fix trigger
+DROP TRIGGER check_location_and_date_works on workslocation cascade;
+
+CREATE OR REPLACE FUNCTION check_loc_work() RETURNS TRIGGER AS $check_loc_work$
+	BEGIN
+		UPDATE WorksLocation SET wrlEnd = NEW.wrlStart
+		WHERE 
+			wrlCharKey=NEW.wrlCharKey AND
+			wrlNumKey=NEW.wrlNumKey AND 
+			wrlEnd IS NULL
+		;
+	RETURN NEW;
+	END;
+$check_loc_work$ LANGUAGE plpgsql;
+
+CREATE TRIGGER check_location_and_date_works
+BEFORE INSERT ON WorksLocation
+FOR EACH ROW EXECUTE PROCEDURE check_loc_work();

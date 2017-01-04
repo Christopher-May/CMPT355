@@ -1,0 +1,49 @@
+--Create Relevent Domains
+DROP DOMAIN borrAddress CASCADE;
+DROP DOMAIN borrEmail CASCADE;
+
+CREATE DOMAIN borrAddress AS varchar(70);
+CREATE DOMAIN borrEmail AS varchar(50);
+
+--Create table to loan works 
+
+ALTER TABLE worksborrow
+	ADD COLUMN wrbBorrower nameof
+;
+ALTER TABLE worksborrow
+	ADD COLUMN wrbBorrowerAddress borrAddress
+;
+ALTER TABLE worksborrow
+	ADD COLUMN wrbBorrowerEmail borrEmail
+;
+
+INSERT INTO worksBorrow 
+	VALUES
+	('AVF',2,'Loaned','Christopher May','2017-01-22','2017-09-22','Western Development Museum','2610 Lorne Ave Saskatoon, SK','saskatoon@wdm.ca'),
+	('FAA',2,'Loaned','Christopher May','2017-01-22','2017-09-22','Western Development Museum','2610 Lorne Ave Saskatoon, SK','saskatoon@wdm.ca'),
+	('GAA',3,'Loaned','Christopher May','2016-11-19','2017-01-15','Plane Museum of Canada','61A Old Finch Avenue Toronto,Ontario M1B 5K7','planes@gmail.com'),
+	('HVB',3,'Loaned','Christopher May','2016-11-19','2017-01-15','Plane Museum of Canada','61A Old Finch Avenue Toronto,Ontario M1B 5K7','planes@gmail.com'),
+	('KAJ',2,'Loaned','Christopher May','2016-12-31','2017-08-12','Real Museum of California','8881 Central Street San Jose, CA 95116','realmuseum@hotmail.com'),
+	('ADB',1,'Loaned','Christopher May','2017-01-31','2017-04-11','Real Museum of California','8881 Central Street San Jose, CA 95116','realmuseum@hotmail.com')
+;
+CREATE VIEW borrowed
+	AS SELECT
+		wrbCharKey AS "CHARKEY",
+		wrbNumKEy AS "NUMKEY",
+		wrbBorrowed AS "Borrowed",
+		wrbDonor AS "Donor",
+		wrbRecieved AS "Recieved",
+		wrbReturned AS "Returned",
+		wrbBorrower AS "Borrower",
+		wrbBorrowerAddress "BorrowerAddress",
+		wrbBorrowerEmail AS "BorrowerEmail"
+	FROM
+		worksBorrow
+;
+
+SELECT * 
+FROM
+	borrowed
+;
+
+
