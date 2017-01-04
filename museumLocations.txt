@@ -1,0 +1,5 @@
+Storage	2000	33	0	600
+Lobby	1000	2	2	4
+Gallery A	500	10	7	16
+Gallery B	500	9	7	16
+Gallery C	1000	16	14	24 

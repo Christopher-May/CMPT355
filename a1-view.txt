@@ -1,0 +1,53 @@
+-Produce for the head of the museum a listing of all works (including their identifier, name, and insurance value} that are currently in storage.
+
+CREATE VIEW WorksinStorage
+	AS SELECT
+		m.mwCharKey AS "Character Identifier",
+		m.mwNumKey AS "Numeric Identifier",
+		w.wrName AS "Name of Work",
+		w.wrPrice AS "Insurance Value",
+	FROM
+		MuseumWorks m, Works w
+	WHERE 
+		m.mwCharKey = w.wrCharKey AND
+		m.mwCharKey = w.mrCharKey AND
+		m.mwLocation = "Storage"
+);
+
+-Produce for the public a listing of all exhibitions (including name, description, location, and number of works)
+
+CREATE VIEW PublicWorks
+	AS SELECT
+		x.exName AS "Name",
+		x.exLocation AS "Location,
+		x.exNumWorks AS "Number of Works",
+		x.exDescription AS "description 
+	FROM
+		Exhibitions x		
+);
+
+-Produce for the public a listing of all publicly available data on all works in each of the exhibitions sorted by exhibition and by the name of the work
+CREATE VIEW WorksFree
+	AS SELECT
+		w.wrName AS "Name of Work",
+		w.wrAttributed AS "Attributed",
+		w.wrCreated AS "Created at",
+		w.wrDescription AS "Description of Work",
+		w.mwExhibition AS "Exhibition",
+		w.mwExStart AS "Exhibition Start",
+		w.mwExEnd AS "Exhibition End"
+	FROM
+		MuseumWorks m ,Works w
+	ORDER BY
+		mwExhibition,
+		wrName
+);
+-Produce for the curator a listing of the amount of additional works that could be added to each exhibit based on the unused capacity of the galleries that they are currently in. This listing should just have the amount of additional works that could be added and the name of the exhibit		
+	
+CREATE VIEW UnusedCapacity
+	AS SELECT
+		SELECT mlName AS "Location Name",
+		SELECT mlMax - mlCapacity AS "Room Left"
+	FROM
+		MuseumLocations
+);

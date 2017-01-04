@@ -1,0 +1,186 @@
+SET datestyle TO "ISO, MDY";
+
+--Drop all
+DROP TABLE MuseumLocations CASCADE;
+DROP TABLE MuseumConnections CASCADE;
+DROP TABLE Exhibitions CASCADE;
+DROP TABLE ExhibitionWorks CASCADE;
+DROP TABLE MuseumWorks CASCADE;
+DROP TABLE Works CASCADE;
+DROP TABLE WorkType CASCADE;
+DROP TABLE WorkMedium CASCADE;
+
+DROP DOMAIN numberof CASCADE;
+DROP DOMAIN nameof CASCADE;
+DROP DOMAIN descof CASCADE;
+DROP DOMAIN workscharkey CASCADE;
+DROP DOMAIN worksnumkey CASCADE;
+DROP DOMAIN timeof CASCADE;
+DROP DOMAIN locations CASCADE;
+
+DROP VIEW WorksinStorage CASCADE;
+DROP VIEW PublicWorks CASCADE;
+DROP VIEW WorksFree CASCADE;
+DROP VIEW UnusedCapacity CASCADE;
+
+--Create Domains
+CREATE DOMAIN numberof AS int
+	CHECK (VALUE >0);
+	
+CREATE DOMAIN nameof AS varchar(50)
+	CHECK (VALUE IS NOT NULL);
+
+CREATE DOMAIN descof AS text
+	CHECK (VALUE IS NOT NULL);
+
+CREATE DOMAIN workscharkey as char(3)
+	CHECK (VALUE IS NOT NULL);
+	
+CREATE DOMAIN worksnumkey as smallint
+	CHECK (VALUE IN('1','2','3'));
+
+CREATE DOMAIN timeof as date;
+
+CREATE DOMAIN locations as varchar(50)
+	CHECK (VALUE IN('Gallery A','Gallery B','Gallery
+C','Lobby','Storage')); 
+
+--Create Tables
+CREATE TABLE MuseumLocations (
+	mlName nameof PRIMARY KEY,
+	mlSize numberof,
+	mlCapacity numberof,
+	mlMin numberof,
+	mlMax numberof
+);
+
+CREATE TABLE MuseumConnections (
+	mcLocation nameof REFERENCES MuseumLocations(mlName),
+	mcConnects nameof REFERENCES MuseumLocations(mlName),
+	PRIMARY KEY (mcLocation, mcConnects)
+);
+
+CREATE TABLE MuseumWorks (
+	mwWorkCharKey workscharkey REFERENCES Works(wrCharKey),
+	mwWorkNumKey worksnumkey REFERENCES Works(wrNumKey),
+	mwLocation locations,
+	PRIMARY KEY (mwWorkCharKey,mwWorkNumKey)
+);
+CREATE TABLE Exhibitions (
+	exName nameof,
+	exStart timeof,
+	exEnd timeof,
+	exLocation locations,
+	exNumWorks numberof,
+	exDescription descof,
+	PRIMARY KEY (exName,exStart)
+);
+
+CREATE TABLE ExhibitionWorks (
+	ewName nameof REFERENCES Exhibitions(exName),
+	ewStart timeof REFERENCES Exhibitions(exStart),
+	ewWorkCharKey workscharkey REFERENCES Works(wrCharKey),
+	ewWorkNumKey worksnumkey REFERENCES Works(wrNumrKey),
+	PRIMARY KEY (exName,exStart)
+); 
+
+CREATE TABLE Works (
+	wrCharKey workscharkey,
+	wrNumKey worksnumkey,
+	wrName nameof,
+	wrAttributed nameof,
+	wrCreated timeof,
+	wrRetrieved timeof,
+	wrPrice numberof,
+	wrDescription descof,
+	PRIMARY KEY (wrCharKey, wrNumKey)
+);
+
+CREATE TABLE WorkType (
+	wtCharKey workscharkey REFERENCES Works(wrNumKey),
+	wtNumKey worksnumkey REFERENCES Works(wrNumKey),
+	wtMainType nameof,
+	wtSecondType nameof,
+	PRIMARY KEY (wtCharKey,wtNumKey,wtSecondType)
+);
+
+CREATE TABLE WorkMedium (
+	wmCharKey workscharkey REFERENCES Works(wrNumKey),
+	wmNumKey worksnumkey REFERENCES Works(wrNumKey),
+	wmMedium nameof,
+	PRIMARY KEY (wmCharKey, wmNumKey, wmMedium)
+);
+
+--populate tables
+\copy Works FROM 'works.txt'
+\copy WorkType FROM 'worksTypes.txt'
+\copy WorkMedium FROM 'worksMedium.txt'
+\copy MuseumWorks FROM 'museumWorks.txt'
+\copy Exhibitions FROM 'exhibitions.txt'
+\copy ExhibitionWorks FROM 'exhibitionWorks.txt'
+\copy MuseumConnections FROM 'museumConnections.txt'
+\copy MuseumLocations FROM 'museumLocations.txt'
+
+--create views
+
+CREATE VIEW WorksinStorage
+	AS SELECT
+		w.wrCharKey AS "Character Identifier",
+		w.wrNumKey AS "Numeric Identifier",
+		w.wrName AS "Name of Work",
+		w.wrPrice AS "Insurance Value"
+	FROM
+		MuseumWorks m, Works w
+	WHERE 
+		mwWorkCharKey = wrCharKey AND
+		mwWorkNumKey = wrNumKey AND
+		mwLocation LIKE 'Storage'
+;
+CREATE VIEW PublicExhib
+	AS SELECT 
+		exName AS "Name",
+		exLocation AS "Location",
+		exNumWorks AS "Number of Works",
+		exDescription AS "Description"
+	FROM
+		Exhibitions 		
+;
+CREATE VIEW PublicWorks
+	AS SELECT 
+		w.wrName AS "Name of Work",
+		w.wrAttributed AS "Attributed",
+		m.wmMedium AS "Medium",
+		w.wrCreated AS "Created at",
+		e.ewName AS "Exhibition Name",
+		w.wrDescription AS "Description of Work"
+	FROM
+		ExhibitionWorks e,Works w, WorkMedium m
+	WHERE
+		ewWorkCharKey = wrCharKey AND
+		ewWorkNumKey = wrNumKey
+	ORDER BY
+		ewName,
+		wrName
+;	
+CREATE VIEW WorksFree
+	AS SELECT 
+		w.wrName AS "Name of Work",
+		x.exEnd AS "Available When"
+	FROM
+		Exhibitions x,ExhibitionWorks e,Works w, WorkMedium m
+	WHERE
+		ewWorkCharKey = wrCharKey AND
+		ewWorkNumKey = wrNumKey AND
+		ewName = exName AND
+		ewSart = exStart
+	ORDER BY
+		ewName,
+		wrName
+;
+CREATE VIEW OpenSpots
+	AS SELECT
+		mlName AS "Location",
+		mlMin-mlCapacity AS "Room Left"
+	FROM
+		MuseumLocations
+;

@@ -1,0 +1,70 @@
+AMB	1	Storage
+AYB	3	Gallery B
+BBB	3	Storage
+CSC	3	Storage
+DDA	2	Gallery B
+ECB	3	Storage
+ELB	3	Storage
+GAA	3	Storage
+GJB	3	Gallery C
+HHB	2	Gallery B
+HVB	3	Storage
+HHB	3	Storage
+AVB	3	Storage
+MGS	3	Storage
+MUS	3	Storage
+TPB	3	Gallery B
+SBB	3	Storage
+GGA	3	Storage
+VVB	3	Lobby
+ATB	2	Gallery A
+BTB	2	Storage
+BAB	3	Storage
+BCB	3	Gallery C
+ELB	3	Storage
+FDB	3	Storage
+GMB	3	Storage
+GEB	3	Gallery C
+HSB	3	Storage
+HUB	3	Storage
+PTP	3	Storage
+SRB	2	Storage
+SJF	3	Storage
+SSB	2	Gallery B
+ALB	2	Gallery A
+BHB	3	Gallery C
+BMB	1	Gallery C
+PCA	2	Gallery B
+MSB	2	Storage
+MVB	2	Storage
+FSG	2	Gallery A
+FPA	3	Gallery C
+FBG	2	Lobby
+FGB	3	Gallery C
+HIB	2	Gallery C
+KKJ	2	Storage
+MKG	2	Gallery A
+MMG	2	Storage
+MKJ	2	Gallery C
+PMA	2	Storage
+SOB	1	Gallery A
+SPB	1	Gallery A
+SFB	2	Gallery C
+YOJ	2	Storage
+AWB	2	Storage
+AAB	2	Gallery B
+ANB	2	Gallery C
+BVG	2	Storage
+BSB	3	Gallery C
+SCB	2	Gallery A
+DCC	3	Storage
+DCB	2	Storage
+DDB	2	Gallery B
+FAA	2	Gallery A
+DDB	1	Storage
+SAB	1	Storage
+AAI	2	Gallery C
+AVF	2	Gallery A
+FCA	3	Storage
+MDA	3	Storage
+DOC	3	Gallery B
