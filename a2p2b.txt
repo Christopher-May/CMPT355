@@ -1,0 +1,112 @@
+
+--Add time availible value into locations
+ALTER TABLE Locations ADD COLUMN mlDateAvailible timeof;
+--Add new facilities
+INSERT INTO Locations VALUES ('Gallery D',1500,0,15,25,'2016-12-17');
+
+--Update Doors for new location
+INSERT INTO Doors VALUES ('Gallery D','Gallery B');
+INSERT INTO Doors VALUES ('Gallery B','Gallery D');
+
+--ADD dates to older location
+UPDATE Locations SET mlDateAvailible='1990-07-01' WHERE mlName = 'Gallery A';
+UPDATE Locations SET mlDateAvailible='1990-07-01' WHERE mlName = 'Gallery B';
+UPDATE Locations SET mlDateAvailible='1990-07-01' WHERE mlName = 'Gallery C';
+UPDATE Locations SET mlDateAvailible='1990-07-01' WHERE mlName = 'Storage';
+UPDATE Locations SET mlDateAvailible='1990-07-01' WHERE mlName = 'Lobby';
+
+--Check if multiple location exhibitions have connections between the locations
+
+CREATE OR REPLACE FUNCTION check_connections() RETURNS TRIGGER AS $check_connections$
+	DECLARE
+		duplocation nameof;
+		any_rows int;
+	BEGIN
+		SELECT exlLocation INTO duplocation
+		FROM 
+		      ExhibitionsLocations
+		WHERE 
+			exlName = NEW.exlName
+		;
+	raise notice 'Value: %', duplocation;
+	IF duplocation IS NOT NULL THEN
+		IF  NOT EXISTS (SELECT 1 FROM Doors WHERE mdLoc1 = duplocation AND mdLoc2 = NEW.exlLocation) THEN
+			RETURN NULL;
+		ELSE
+			RETURN NEW;
+		END IF;
+	ELSE
+			RETURN NEW;
+	END IF;
+        
+	END;
+$check_connections$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION check_loc_date() RETURNS TRIGGER AS $check_loc_date$
+	DECLARE
+	      locdate timeof;
+	BEGIN
+		SELECT mlDateAvailible INTO locdate 
+		FROM 
+			Locations
+		WHERE
+			mlname = NEW.exlLocation
+		;
+			
+		IF NEW.exlStart <= locdate THEN
+			RETURN NULL;
+		ELSE
+			RETURN NEW;
+		END IF;
+	END;
+$check_loc_date$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION check_ex_date() RETURNS TRIGGER AS $check_ex_date$
+	BEGIN
+		UPDATE ExhibitionsWorks SET exwEnd = NEW.exlEnd WHERE exwName = NEW.exlName AND exwStart = NEW.exlStart;
+	RETURN NEW;
+	END;
+$check_ex_date$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION check_ex_date2() RETURNS TRIGGER AS $check_ex_date2$
+	BEGIN
+		UPDATE ExhibitionsLocations SET exlEnd = NEW.exwEnd WHERE exlName = NEW.exwName AND exlStart = NEW.exwStart;
+		UPDATE ExhibitionsWorks SET exwEnd = NEW.exwEnd WHERE exwName = NEW.exwName AND exwStart = NEW.exwStart;
+	RETURN NEW;
+	END;
+$check_ex_date2$ LANGUAGE plpgsql;
+
+CREATE TRIGGER checkConnections
+BEFORE INSERT ON ExhibitionsLocations
+FOR EACH ROW EXECUTE PROCEDURE check_connections();
+
+CREATE TRIGGER checkLocations
+BEFORE INSERT ON ExhibitionsLocations
+FOR EACH ROW EXECUTE PROCEDURE check_loc_date();
+
+CREATE TRIGGER checkExDates
+AFTER UPDATE ON ExhibitionsLocations
+FOR EACH ROW EXECUTE PROCEDURE check_ex_date();
+
+CREATE TRIGGER checkExDates2
+AFTER UPDATE ON ExhibitionsWorks
+FOR EACH ROW EXECUTE PROCEDURE check_ex_date2();
+--Show its Working
+CREATE VIEW LocationAdded
+	AS SELECT
+		mlName AS "Name",
+		mlsize AS "Size",
+		mlCapacity AS "Capacity",
+		mlMin AS "Minimum",
+		mlMax AS "Max",
+		mlDateAvailible AS "DateAvailible"
+	FROM
+		Locations
+	ORDER BY
+		mlDateAvailible,
+		mlName
+;
+SELECT *
+FROM
+	LocationAdded
+;

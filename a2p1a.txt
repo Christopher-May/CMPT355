@@ -1,0 +1,131 @@
+
+--Change datestyle to iso from stupid excel format
+SET DATESTYLE TO "ISO, MDY";
+
+--DROP EVERYTHING
+
+DROP DOMAIN numberof CASCADE;
+DROP DOMAIN nameof CASCADE;
+DROP DOMAIN descof CASCADE;
+DROP DOMAIN workschar CASCADE;
+DROP DOMAIN worksnum CASCADE;
+DROP DOMAIN timeof CASCADE;
+
+DROP TABLE Exhibitions CASCADE;
+DROP TABLE Doors CASCADE;
+DROP TABLE Locations CASCADE;
+DROP TABLE WorksLocation CASCADE;
+DROP TABLE Works CASCADE;
+DROP TABLE WorksMedia CASCADE;
+DROP TABLE WorksType CASCADE;
+DROP TABLE ExhibitionsWorks CASCADE;
+DROP TABLE ExhibitionsLocations CASCADE;
+
+--DOMAINS
+
+CREATE DOMAIN timeof AS date;
+
+CREATE DOMAIN nameof AS varchar(50);
+
+CREATE DOMAIN numberof AS int
+	CHECK (VALUE>=0);
+
+CREATE DOMAIN descof AS text;
+
+CREATE DOMAIN workschar AS char(3)
+	CHECK (VALUE IS NOT NULL);
+	
+CREATE DOMAIN worksnum AS smallint 
+	CHECK (VALUE IN ('1','2','3'));
+	
+--TABLES
+
+CREATE TABLE Works (
+	wrCharKey workschar,
+	wrNumKey worksnum,
+	wrName nameof,
+	wrAttributed nameof,
+	wrCreated timeof,
+	wrRetrieved timeof,
+	wrPrice numberof,
+	wrDescription descof,
+	UNIQUE (wrCharKey,wrNumKey),
+	PRIMARY KEY (wrCharKey, wrNumKey)		
+);
+
+CREATE TABLE WorksMedia (
+	wrmCharKey workschar,
+	wrmNumKey worksnum,
+	wrmMedia nameof,
+	FOREIGN KEY (wrmCharKey,wrmNumKey) REFERENCES Works (wrCharKey,wrNumKey),
+	PRIMARY KEY (wrmCharKey,wrmNumKey)
+);
+
+CREATE TABLE WorksType (
+	wrtCharKey workschar,
+	wrtNumKey worksnum,
+	wrtMainType nameof,
+	wrtSecondaryType nameof,
+	FOREIGN KEY (wrtCharKey,wrtNumKey) REFERENCES Works (wrCharKey,wrNumKey),
+	PRIMARY KEY (wrtCharKey, wrtNumKey,wrtSecondaryType)
+);
+
+CREATE TABLE WorksLocation (
+	wrlCharKey workschar,
+	wrlNumKey worksnum,
+	wrlLocation nameof,
+	wrlStart timeof,
+	wrlEnd timeof DEFAULT NULL,
+	FOREIGN KEY (wrlCharKey,wrlNumKey) REFERENCES Works (wrCharKey, wrNumKey),
+	PRIMARY KEY (wrlCharKey, wrlNumKey, wrlLocation,wrlStart)
+);
+
+CREATE TABLE Locations (
+	mlName nameof,
+	mlsize numberof,
+	mlCapacity numberof,
+	mlMin numberof,
+	mlMax numberof,
+	PRIMARY KEY (mlName)
+);
+
+CREATE TABLE Doors (
+	mdLoc1 nameof REFERENCES Locations (mlName),
+	mdLoc2 nameof REFERENCES Locations (mlName),
+	PRIMARY KEY (mdLoc1,mdLoc2)
+);
+
+
+CREATE TABLE Exhibitions (
+	exName nameof PRIMARY KEY,
+	exDescription descof
+);
+
+CREATE TABLE ExhibitionsWorks (
+	exwName nameof REFERENCES Exhibitions(exName),
+	exwStart timeof,
+	exwEnd timeof,
+	exwCharKey workschar,
+	exwNumKey worksnum,
+	FOREIGN KEY (exwCharKey, exwNumKey) REFERENCES Works (wrCharKey, wrNumKey),
+	PRIMARY KEY (exwName, exwStart,exwCharKey,exwNumKey)
+);
+
+CREATE TABLE ExhibitionsLocations (
+	exlName nameof REFERENCES Exhibitions(exName),
+	exlStart timeof,
+	exlEnd timeof,
+	exlLocation nameof,
+	PRIMARY KEY (exlName, exlStart)
+);
+
+--Populate tables
+\copy Works FROM 'works.txt'
+\copy WorksMedia FROM 'worksMedium.txt'
+\copy WorksType FROM 'worksTypes.txt'
+\copy WorksLocation FROM 'museumWorks.txt' WITH NULL AS 'NULL'
+\copy Locations FROM 'museumLocations.txt'
+\copy Doors FROM 'museumConnections.txt'
+\copy Exhibitions FROM 'exhibitions.txt'
+\copy ExhibitionsWorks FROM 'exhibitionWorks.txt'
+\copy ExhibitionsLocations FROM 'exhibitionLocations.txt'

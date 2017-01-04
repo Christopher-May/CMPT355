@@ -1,0 +1,37 @@
+TUR	2	Propeller	Goods Transporter
+RWP	2	Propeller	Sporting
+POP	2	Propeller	Fighter
+POP	2	Propeller	Training
+POP	2	Propeller	Bomber
+PZS	2	Propeller	Training
+PZS	2	Propeller	Scouting
+VLF	2	Propeller	Sporting
+VLF	2	Propeller	Training
+PRZ	2	Propeller	Training
+FLG	2	Rotocraft	Training
+CIB	2	Rotocraft	Scouting
+SSA	2	Rotocraft	Scouting
+KAJ	2	Rotocraft	Scouting
+MGA	2	Blimp	Scouting
+BBA	2	Jet	Fighter
+NNJ	2	Jet	Fighter
+BBG	2	Rocketcraft	Intercepter
+SSS	2	Propeller	Intercepter
+AAF	3	Rotocraft	Scouting
+AAS	3	Jet	Troop Transporter
+ANS	3	Jet	Troop Transporter
+IRR	3	Jet	Fighter
+IRR	3	Jet	Intercepter
+IRR	3	Jet	Training
+BCA	3	Jet	Troop Transporter
+BXA	3	Jet	Scouting
+CCS	3	Jet	Training
+LEB	3	Jet	Fighter
+DXA	3	Jet	Bomber
+CCA	3	Propeller	Scouting
+DDF	3	Jet	Intercepter
+DAA	3	Jet	Bomber
+BBS	3	Jet	Scouting
+BBS	3	Jet	Rescue
+BES	3	Jet	Rescue
+BES	3	Jet	Troop Transporter

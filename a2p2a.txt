@@ -1,0 +1,103 @@
+DROP TABLE WorksBorrow CASCADE;
+--Create table borrowed works
+CREATE TABLE WorksBorrow (
+	wrbCharKey workschar,
+	wrbNumKey worksnum,
+	wrbBorrowed nameof,
+	wrbDonor nameof,
+	wrbRecieved timeof,
+	wrbReturned timeof,
+	FOREIGN KEY (wrbCharKey,wrbNumKey) REFERENCES Works (wrCharKey,wrNumKey),
+	PRIMARY KEY (wrbCharKey,wrbNumKey,wrbBorrowed)
+);
+
+--populate with borrowed and avaliable
+\copy Works FROM 'a2p2aWorksB.txt'
+\copy Works (wrCharKey,wrNumKey,wrName,wrAttributed,wrCreated,wrPrice,wrDescription) FROM 'a2p2aWorksA.txt'
+\copy WorksType FROM 'a2p2aType.txt'
+\copy WorksMedia FROM 'a2p2aMedia.txt'
+\copy WorksBorrow (wrbCharKey,wrbNumKey,wrbBorrowed,wrbDonor,wrbRecieved) FROM 'a2p2aBorrowed.txt'
+\copy WorksBorrow (wrbCharKey,wrbNumKey,wrbBorrowed,wrbDonor) FROM 'a2p2aAvaliable.txt'
+\copy WorksLocation (wrlCharKey,wrlNumKey,wrlLocation,wrlStart) FROM 'a2p2aLocationB.txt'
+\copy WorksLocation (wrlCharKey,wrlNumKey,wrlLocation) FROM 'a2p2aLocationA.txt'
+
+--Create Trigger When Work Moved update End date
+CREATE OR REPLACE FUNCTION check_loc_work() RETURNS TRIGGER AS $check_loc_work$
+	DECLARE
+		enddate timeof;
+	BEGIN
+		SELECT MAX(wrlStart) INTO enddate FROM WorksLocation WHERE wrlCharKey=NEW.wrlCharKey AND wrlNumKey=NEW.wrlCharKey THEN
+		INSERT INTO WorksLocation (
+			wrlCharKey,
+			wrlSwrlNumKey,
+			wrlLocation,
+			wrlStart,
+			wrlEnd
+		)\
+		VALUES (
+			NEW.wrlCharKey,
+			NEW.wrlSwrlNumKey,
+			NEW.wrlLocation,
+			NEW.wrlStart,
+			enddate
+		);
+		ELSE
+			RETURN NEW;
+		END IF;
+	END;
+$check_loc_work$ LANGUAGE plpgsql;
+
+CREATE TRIGGER check_location_and_date_works
+BEFORE INSERT ON WorksLocation
+FOR EACH ROW EXECUTE PROCEDURE check_loc_work();
+
+--Show That this Works
+CREATE VIEW WorksListing
+	AS SELECT
+		wrCharKey AS "CharKey",
+		wrNumKey AS "NumKey",
+		wrName AS "Name",
+		wrAttributed AS "Attributed",
+		wrCreated AS "Created",
+		wrRetrieved AS "Retrieved",
+		wrPrice AS "Price",
+		wrmMedia AS "Media",
+		wrtMainType AS "Main Type",
+		wrtSecondaryType AS "Secondary Type",
+		wrDescription AS "Description"
+	FROM
+		Works,
+		WorksMedia,
+		WorksType
+	WHERE
+		wrCharKey = wrtCharKey AND
+		wrtCharKey = wrmCharKey AND
+		wrNumKey = wrtNumKey AND
+		wrtNumKey = wrmNumKey
+	ORDER BY
+		wrName
+;
+
+CREATE VIEW WorksBandA
+	AS SELECT 
+		wrbCharKey AS "CharKey",
+		wrbNumKey AS "NumKey",
+		wrbBorrowed AS "Borrowed or Avaliable",
+		wrbDonor AS "Donor",
+		wrbRecieved AS "Recieved At",
+		wrbReturned AS "Returned At"
+	FROM
+		WorksBorrow
+	ORDER BY
+		wrbBorrowed
+;
+
+SELECT *
+FROM
+	WorksListing
+;
+
+SELECT *
+FROM
+	WorksBandA
+;

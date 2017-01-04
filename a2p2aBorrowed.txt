@@ -1,0 +1,15 @@
+TUR	2	Borrowed	Bugs Bunny	2015-05-01
+RWP	2	Borrowed	Speedy Gonzales	2015-05-01
+POP	2	Borrowed	Pepe Le Pew	2015-06-18
+PZS	2	Borrowed	Yosemite Sam	2015-06-17
+VLF	2	Borrowed	Daffy Duck	2014-05-17
+PRZ	2	Borrowed	Lola Bunny	2014-05-17
+FLG	2	Borrowed	Porky Pig	2016-02-22
+CIB	2	Borrowed	Elmer Fudd	2016-02-22
+SSA	2	Borrowed	Barnyard Dawg	2016-02-22
+KAJ	2	Borrowed	Beaky Buzzard	2016-03-12
+MGA	2	Borrowed	Cool Cat	2016-03-12
+BBA	2	Borrowed	Wile E. Coyote	2014-04-17
+NNJ	2	Borrowed	Tasmanian Devil	2014-04-17
+BBG	2	Borrowed	Road Runner	2015-12-12
+SSS	2	Borrowed	Colonel Shuffle	2015-12-12

@@ -1,0 +1,37 @@
+ALTER TABLE Works ADD COLUMN wrComWords nameof;
+--Order By number of total times
+SELECT DISTINCT(wrComWords),ts_stat.* FROM Works, 
+ts_stat('select to_tsvector(wrDescription) from Works') 
+ORDER BY wrComWords,ts_stat.nentry desc
+LIMIT 35;
+--Order by number of items
+SELECT DISTINCT(wrComWords),ts_stat.* FROM Works, 
+ts_stat('select to_tsvector(wrDescription) from Works') 
+ORDER BY wrComWords,ts_stat.ndoc desc
+LIMIT 35;
+--Order by similarity
+SELECT DISTINCT(wrComWords),ts_stat.* FROM Works, 
+ts_stat('select to_tsvector(wrDescription) from Works') 
+ORDER BY ts_stat.nentry,wrComWords desc;
+
+-- I only Added one type because prototype and experimental are pretty much the same thing and all the other types are not very descriptive 
+\copy WorksType FROM 'a2p2cType.txt'
+
+--Show Working
+CREATE VIEW NewTypes
+	AS SELECT
+		wrtCharKey AS "Character Key",
+		wrtNumKey AS "Number Key",
+		wrtMainType AS "Main Type",
+		wrtSecondaryType AS "Secondary Type"
+	FROM
+		WorksType
+	ORDER BY
+		wrtSecondaryType,
+		wrtMainType
+;
+
+SELECT *
+FROM
+	NewTypes
+;

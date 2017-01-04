@@ -1,0 +1,15 @@
+AAF	3	Avaliable	Sylvester the Cat
+AAS	3	Avaliable	Henery Hawk
+ANS	3	Avaliable	Hector the Bulldog
+IRR	3	Avaliable	Penelope Pussycat
+BCA	3	Avaliable	Nasty Canasta
+BXA	3	Avaliable	Conrad the Cat
+CCS	3	Avaliable	Melissa Duck
+BHA	3	Avaliable	Playboy Penguin
+LEB	3	Avaliable	Goofy Gophers
+DXA	3	Avaliable	Michigan J. Frog
+CCA	3	Avaliable	Count Blood Count
+DDF	3	Avaliable	Honey Bunny
+DAA	3	Avaliable	Clyde Rabbit
+BBS	3	Avaliable	Charlie Dog
+BES	3	Avaliable	Tweety

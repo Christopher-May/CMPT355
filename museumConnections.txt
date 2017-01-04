@@ -1,0 +1,12 @@
+Storage	Lobby
+Lobby	Storage
+Lobby	Gallery A
+Lobby	Gallery B
+Gallery A	Gallery B
+Gallery A	Lobby
+Gallery A	Gallery C
+Gallery B	Gallery B
+Gallery B	Lobby
+Gallery B	Gallery C
+Gallery C	Gallery A
+Gallery C	Gallery B

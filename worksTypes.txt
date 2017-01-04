@@ -1,0 +1,108 @@
+AMB	1	Jet	Fighter
+AYB	3	Propeller	Troop Transport
+AYB	3	Propeller	Air Liner
+BBB	3	Jet	Fighter
+CSC	3	Jet	Fighter
+DDA	2	Propeller	Troop Transport
+DDA	2	Propeller	Fighter
+ECB	3	Jet	Fighter
+ECB	3	Jet	Bomber
+ELB	3	Jet	Intercepter
+ELB	3	Jet	Fighter
+GAA	3	Jet	Fighter
+GAA	3	Jet	Bomber
+GJB	3	Jet	Fighter
+GJB	3	Jet	Intercepter
+HHB	2	Propeller	Goods Transport
+HHB	2	Propeller	Troop Transport
+HVB	3	Jet	Bomber
+HHB	3	Jet	Bomber
+HHB	3	Jet	Fighter
+AVB	3	Jet	Bomber
+MGS	3	Jet	Fighter
+MUS	3	Jet	Fighter
+TPB	3	Propeller	Troop Transport
+TPB	3	Propeller	Air Liner
+GGA	3	Rotercraft	Fighter
+VVB	3	Jet	Bomber
+ATB	2	Jet	Bomber
+BTB	2	Jet	Fighter
+BAB	3	Rocketcraft	Intercepter
+BCB	3	Jet	Fighter
+BCB	3	Jet	Intercepter
+BCB	3	Jet	Bomber
+FDB	3	Jet	Training
+EEB	3	Jet	Fighter
+GMB	3	Jet	Intercepter
+GEB	3	Jet	Fighter
+HSB	3	Jet	Scouting
+HUB	3	Jet	Training
+PTP	3	Jet	Intercepter
+SRB	2	Rocketcraft	Intercepter
+SJF	3	Jet	Fighter
+SSB	2	Rocketcraft	Training
+SSB	2	Rocketcraft	Scouting
+BHB	3	Jet	Fighter
+BMB	1	Propeller	Training
+BMB	1	Propeller	Sporting
+BMB	1	Propeller	Fighter
+PCA	2	Propeller	Rescue
+PCA	2	Propeller	Scouting
+PCA	2	Propeller	Troop Transport
+ALB	2	Propeller	Fighter
+MSB	2	Propeller	Training
+MSB	2	Propeller	Fighter
+MVB	2	Jet	Fighter
+FSG	2	Propeller	Scouting
+FSG	2	Propeller	Fighter
+FPA	3	Jet	Rescue
+FPA	3	Jet	Scouting
+FBG	2	Jet	Rescue
+FBG	2	Jet	Rotercraft
+FBG	2	Jet	Scouting
+FGB	3	Jet	Fighter
+HIB	2	Propeller	Fighter
+KKJ	2	Propeller	Fighter
+MKG	2	Propeller	Intercepter
+MMG	2	Propeller	Intercepter
+MKJ	2	Propeller	Scouting
+MKJ	2	Propeller	Fighter
+PMA	2	Propeller	Fighter
+PMA	2	Propeller	Bomber
+SOB	1	Propeller	Fighter
+SOB	1	Propeller	Training
+SOB	1	Propeller	Sporting
+SPB	1	Propeller	Sporting
+SPB	1	Propeller	Fighter
+SPB	1	Propeller	Training
+SFB	2	Propeller	Scouting
+SFB	2	Propeller	Fighter
+YOJ	2	Rocketcraft	Fighter
+AWB	2	Propeller	Air Liner
+AWB	2	Propeller	Goods Transport
+AWB	2	Propeller	Troop Transport
+AAB	2	Propeller	Scouting
+ANB	2	Propeller	Training
+ANB	2	Propeller	Bomber
+BVG	2	Rocketcraft	Training
+BVG	2	Rocketcraft	Bomber
+BVG	2	Rocketcraft	Scouting
+BSB	3	Rotercraft	Rescue
+BSB	3	Rotercraft	Bomber
+SCB	2	Propeller	Sporting
+DCC	3	Propeller	Sporting
+DCC	3	Propeller	Training
+DCB	2	Jet	Air Liner
+DDB	2	Propeller	Goods Transport
+FAA	2	Propeller	Training
+FAA	2	Propeller	Sporting
+DDB	1	Propeller	Sporting
+DDB	1	Propeller	Training
+SAB	1	Propeller	Sporting
+SAB	1	Propeller	Training
+AAI	2	Propeller	Fighter
+AVF	2	Propeller	Fighter
+FCA	3	Jet	Goods Transport
+FCA	3	Jet	Troop Transport
+MDA	3	Jet	Training
+DOC	3	Propeller	Goods Transport

@@ -1,0 +1,15 @@
+AAF	3	Avaliable
+AAS	3	Avaliable
+ANS	3	Avaliable
+IRR	3	Avaliable
+BCA	3	Avaliable
+BXA	3	Avaliable
+CCS	3	Avaliable
+BHA	3	Avaliable
+LEB	3	Avaliable
+DXA	3	Avaliable
+CCA	3	Avaliable
+DDF	3	Avaliable
+DAA	3	Avaliable
+BBS	3	Avaliable
+BES	3	Avaliable

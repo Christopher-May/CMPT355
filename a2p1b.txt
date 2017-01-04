@@ -1,0 +1,26 @@
+--I tried to do it automatic but in my report discussed what I could not figure out
+--ManualWay
+\copy Exhibitions FROM 'a2p1bExhibitions.txt'
+\copy ExhibitionsWorks FROM 'a2p1bExhibitionWorks.txt'
+\copy ExhibitionsLocations FROM 'a2p1bExhibitionLocations.txt'
+
+--Test to Show that This works 
+CREATE VIEW ShowExhibitions
+	AS SELECT
+		exName AS "Exhibition Name",
+		exDescription AS "Description",
+		exlStart AS "Start Date",
+		exlEnd AS "End Date",
+		exlLocation AS "Location"
+	FROM
+		Exhibitions,
+		ExhibitionsLocations
+	WHERE
+		exName = exlName
+	Order BY
+		exName
+;
+SELECT * 
+FROM 
+	ShowExhibitions
+;

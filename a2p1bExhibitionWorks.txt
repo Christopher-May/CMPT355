@@ -1,0 +1,37 @@
+WWII Planes	12/1/2016	12/5/2016	MMG	2
+WWII Planes	12/1/2016	12/5/2016	BTB	2
+WWII Planes	12/1/2016	12/5/2016	PCA	2
+WWII Planes	12/1/2016	12/5/2016	YOJ	2
+WWII Planes	12/1/2016	12/5/2016	DDA	2
+WWII Planes	12/1/2016	12/5/2016	MKG	2
+WWII Planes	12/1/2016	12/5/2016	KKJ	2
+WWII Planes	12/1/2016	12/5/2016	SFB	2
+WWII Planes	12/1/2016	12/5/2016	FSG	2
+Planes with jets	2/1/2017	2/6/2017	BCB	3
+Planes with jets	2/1/2017	2/6/2017	HSB	3
+Planes with jets	2/1/2017	2/6/2017	HUB	3
+Planes with jets	2/1/2017	2/6/2017	PTP	3
+Planes with jets	2/1/2017	2/6/2017	FPA	3
+Planes with jets	2/1/2017	2/6/2017	FBG	2
+Planes with jets	2/1/2017	2/6/2017	FCA	3
+Planes with jets	2/1/2017	2/6/2017	MDA	3
+Planes with jets	2/1/2017	2/6/2017	MVB	2
+Planes with jets	2/1/2017	2/6/2017	BHB	3
+Planes with jets	2/1/2017	2/6/2017	SJF	3
+Planes with jets	2/1/2017	2/6/2017	EEB	3
+Planes with jets	2/1/2017	2/6/2017	ECB	3
+Planes with jets	2/1/2017	2/6/2017	ELB	3
+Planes with jets	2/1/2017	2/6/2017	GAA	3
+Planes with jets	2/1/2017	2/6/2017	SRB	2
+Planes with jets	2/1/2017	2/6/2017	DCB	2
+Planes with jets	2/1/2017	2/6/2017	GEB	3
+Planes with jets	2/1/2017	2/6/2017	BVG	2
+Planes from Britain	3/1/2017	3/4/2017	TPB	3
+Planes from Britain	3/1/2017	3/4/2017	BAB	3
+Planes from Britain	3/1/2017	3/4/2017	SFB	2
+Planes from Britain	3/1/2017	3/4/2017	HHB	2
+Planes from Britain	3/1/2017	3/4/2017	SSB	2
+Planes from Britain	3/1/2017	3/4/2017	AWB	2
+Planes from Britain	3/1/2017	3/4/2017	BSB	3
+Planes from Britain	3/1/2017	3/4/2017	DDB	2
+Planes from Britain	3/1/2017	3/4/2017	HIB	2

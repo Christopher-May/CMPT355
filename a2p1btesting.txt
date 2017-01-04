@@ -1,0 +1,14 @@
+ --Automatic current Exhibition thing
+ 
+
+CREATE FUNCTION update_exhib() RETURNS trigger AS $up_curr_exhib$
+
+$up_curr_exhib$ LANGUAGE plpgsql;
+
+
+
+CREATE TRIGGER up_curr_exhib
+	AFTER INSERT
+	ON Exhibitions
+	FOR EACH ROW 
+	EXECUTE PROCEDURE update_exhib();
